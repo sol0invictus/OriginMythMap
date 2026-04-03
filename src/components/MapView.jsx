@@ -53,15 +53,15 @@ export default function MapView({
     mapInstanceRef.current = map
     paneRef.current = map.getPane('overlayPane')
 
-    // Migration SVG — below theme arcs, above polygons
+    // Migration SVG — above Leaflet panes (z-index 400), below theme arcs
     const migSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-    migSvg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:350;'
+    migSvg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:450;'
     mapRef.current.appendChild(migSvg)
     migSvgRef.current = migSvg
 
-    // Theme arc SVG — topmost
+    // Theme arc SVG — topmost overlay, above migration paths
     const arcSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-    arcSvg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:400;'
+    arcSvg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:460;'
     mapRef.current.appendChild(arcSvg)
     arcSvgRef.current = arcSvg
 
@@ -322,7 +322,7 @@ export default function MapView({
           hit.setAttribute('stroke', 'transparent')
           hit.setAttribute('stroke-width', '18')
           hit.style.cursor = 'pointer'
-          hit.style.pointerEvents = 'visibleStroke'
+          hit.style.pointerEvents = 'stroke'
           hit.addEventListener('mouseenter', () => setHoveredMig(migration))
           hit.addEventListener('mouseleave', () => setHoveredMig(null))
           hit.addEventListener('click', (e) => { e.stopPropagation(); onMigrationClick(migration) })
@@ -339,7 +339,7 @@ export default function MapView({
         migSvg.appendChild(dot)
       })
 
-      // Enable pointer events on the migration SVG container for hit targets
+      // Keep SVG container pointer-events:none; hit-target children override via pointer-events:stroke
       migSvg.style.pointerEvents = 'none'
     }
 
