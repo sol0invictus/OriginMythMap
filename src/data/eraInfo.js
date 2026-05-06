@@ -1,0 +1,67 @@
+export const ERA_INFO = {
+  prehistoric: {
+    title: 'Prehistoric',
+    subtitle: 'Before Writing',
+    context: `Before the invention of writing, creation stories traveled entirely through oral tradition, ceremony, painting, and sacred objects. We cannot read prehistoric myth directly — we read its traces in rock art, burial practices, and the spatial arrangement of sacred sites. Yet these traces reveal sophisticated cosmological thinking stretching back tens of thousands of years.`,
+    keyDevelopments: [
+      'Rock art at Blombos Cave, South Africa — earliest symbolic behavior (~75,000 BCE)',
+      'Cave paintings at Lascaux and Altamira — narrative art and possible cosmological maps (~17,000 BCE)',
+      'Göbekli Tepe, Turkey — the world\'s first known monumental temple complex (~9600 BCE)',
+      'Çatalhöyük — the first large human settlement; Great Mother goddess figurines (~7500 BCE)',
+      'The world\'s oldest pottery — Jōmon Japan (~14,000 BCE)',
+      'Human migration to Australia (~65,000 BCE) and the Americas (~15,000 BCE)',
+    ],
+  },
+  'bronze-age': {
+    title: 'Bronze Age',
+    subtitle: 'First Writing to the Collapse',
+    context: `The invention of cuneiform writing in Sumer (~3200 BCE) allowed creation myths to be recorded for the first time. What had been oral tradition now became literature. Trade routes carried stories alongside goods — the flood narrative appears from Mesopotamia to Egypt to the Levant. The Bronze Age created the first empires, which shaped theology to serve political authority. Then the Bronze Age Collapse (~1200 BCE) shattered these interconnected civilizations simultaneously.`,
+    keyDevelopments: [
+      'Invention of cuneiform writing in Sumer (~3200 BCE)',
+      'The Pyramid Texts — the oldest surviving religious texts (~2400 BCE)',
+      'The Enuma Elish — the first great written creation myth (~1700 BCE)',
+      'The Atrahasis Epic — humanity created as the gods\' servants; the great flood (~1700 BCE)',
+      'The Hittite Kumarbi Cycle — source of the Greek Theogony succession myth (~1400 BCE)',
+      'The Bronze Age Collapse (~1200 BCE) — simultaneous fall of Mycenae, the Hittites, and Egypt\'s New Kingdom',
+    ],
+  },
+  'iron-age': {
+    title: 'Iron Age',
+    subtitle: 'Alphabets, Empires & the Axial Age',
+    context: `After the Bronze Age Collapse, iron technology democratized military power and the Phoenician alphabet spread literacy beyond palace scribes. New mythological traditions emerged from the ruins of the old empires. Karl Jaspers identified this as the beginning of the "Axial Age" — a period when profound philosophical and religious revolutions occurred almost simultaneously across disconnected civilizations: the Hebrew prophets, Zoroaster, the Upanishads, and Confucius all emerged within a few centuries of each other.`,
+    keyDevelopments: [
+      'The Phoenician alphabet (~1050 BCE) — the ancestor of Greek, Latin, Hebrew, and Arabic scripts',
+      'Zoroaster codifies Persian dualism — good vs. evil as the cosmic creative principle (~1000–600 BCE)',
+      'The Hebrew Bible takes shape — a monotheistic creation narrative reframing Near Eastern traditions (~900–400 BCE)',
+      'The Upanishads composed — the universe as Brahman, Atman as the individual soul (~800–500 BCE)',
+      'Homer\'s Iliad and Odyssey — Greek cosmology enters literary form (~750 BCE)',
+      'The Olmec at their peak — the "mother culture" of Mesoamerica (1200–400 BCE)',
+    ],
+  },
+  classical: {
+    title: 'Classical',
+    subtitle: 'The Axial Age',
+    context: `The philosopher Karl Jaspers identified an "Axial Age" (800–200 BCE) when, almost simultaneously, profound philosophical and religious revolutions occurred across the world: Greek philosophy, the Upanishads and early Buddhism, Zoroaster, Confucius, and the Hebrew prophets all emerged within a few centuries of each other — without any direct contact. Creation myths in this era grew philosophically sophisticated, questioning rather than simply narrating origins.`,
+    keyDevelopments: [
+      'The Axial Age — simultaneous philosophical revolutions across Greece, India, China, and Persia (800–200 BCE)',
+      'Hesiod\'s Theogony — the first systematic literary account of Greek cosmogony (~700 BCE)',
+      'The Buddha, Confucius, and Zoroaster — near-contemporary religious founders (600–500 BCE)',
+      'Alexander\'s conquests carry Greek cosmology to Egypt, Persia, and India (334–323 BCE)',
+      'The Roman Empire spreads Mediterranean mythology across Europe (27 BCE–476 CE)',
+      'The composition of the Mahabharata and Ramayana in India (~400 BCE–400 CE)',
+    ],
+  },
+  medieval: {
+    title: 'Medieval',
+    subtitle: 'Traditions in Tension',
+    context: `The medieval period saw ancient mythological traditions encounter the world religions — Islam, Buddhism, and Christianity. Many indigenous cosmologies were recorded for the first time by outsiders, or were forced underground and survived in adapted forms. Others flourished in isolation, reaching extraordinary sophistication: the Norse Eddas, the Puranas, and the Khmer empire's stone-carved theology at Angkor Wat.`,
+    keyDevelopments: [
+      'Snorri Sturluson composes the Prose Edda — Norse myths recorded just before Christianization (~1220 CE)',
+      'The Puranas codify Hindu cosmology in written form (300–1200 CE)',
+      'Buddhism spreads from India to Tibet, China, Southeast Asia, and Japan',
+      'The Kojiki and Nihon Shoki record Shinto creation myths in writing (712–720 CE)',
+      'Angkor Wat constructed — the largest religious monument ever built, encoding Hindu cosmology in stone (1116 CE)',
+      'The Mali Empire and the flourishing of West African oral tradition (1235–1600 CE)',
+    ],
+  },
+}

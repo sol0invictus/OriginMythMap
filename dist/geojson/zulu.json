@@ -1,0 +1,14 @@
+{
+  "type": "Feature",
+  "properties": { "name": "Zulu / Nguni Bantu" },
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[
+      [26.0, -30.5],
+      [33.0, -30.5],
+      [33.0, -24.0],
+      [26.0, -24.0],
+      [26.0, -30.5]
+    ]]
+  }
+}

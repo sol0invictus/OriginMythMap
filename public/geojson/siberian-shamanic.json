@@ -1,0 +1,11 @@
+{
+  "type": "Feature",
+  "properties": { "id": "siberian-shamanic" },
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[
+      [60, 55], [90, 52], [110, 54], [125, 58], [130, 65],
+      [120, 70], [100, 72], [80, 70], [65, 65], [60, 58], [60, 55]
+    ]]
+  }
+}

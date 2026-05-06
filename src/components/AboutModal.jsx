@@ -1,4 +1,10 @@
+import { getStats } from '../data/analytics'
+import { civilizations } from '../data/civilizations'
+import { myths } from '../data/myths'
+
 export default function AboutModal({ onClose }) {
+  const { topCivs, topThemes, totalViews } = getStats()
+
   return (
     <div className="about-overlay" onClick={onClose}>
       <div className="about-modal" onClick={e => e.stopPropagation()}>
@@ -67,6 +73,42 @@ export default function AboutModal({ onClose }) {
               <div className="about-stat"><span className="stat-num">40+</span><span>Themes</span></div>
             </div>
           </section>
+
+          {totalViews > 0 && (
+            <section>
+              <h3>Your journey</h3>
+              {topCivs.length > 0 && (
+                <div className="analytics-row">
+                  <span className="analytics-label">Most visited</span>
+                  <div className="analytics-chips">
+                    {topCivs.map(([id, count]) => {
+                      const civ = civilizations.find(c => c.id === id)
+                      return civ ? (
+                        <span key={id} className="analytics-chip">
+                          {civ.name}
+                          <span className="analytics-count">{count}</span>
+                        </span>
+                      ) : null
+                    })}
+                  </div>
+                </div>
+              )}
+              {topThemes.length > 0 && (
+                <div className="analytics-row">
+                  <span className="analytics-label">Top themes</span>
+                  <div className="analytics-chips">
+                    {topThemes.map(([theme, count]) => (
+                      <span key={theme} className="analytics-chip">
+                        {theme}
+                        <span className="analytics-count">{count}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <p className="analytics-note">Stored locally in your browser. Never sent anywhere.</p>
+            </section>
+          )}
 
           <section className="about-footer-note">
             <p>

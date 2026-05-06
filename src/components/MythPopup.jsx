@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { myths } from '../data/myths'
 import { ERAS, civilizations } from '../data/civilizations'
+import { getHtmlGlyph } from '../utils/glyphs'
 
 function getRelated(myth, currentId) {
   if (!myth?.themes?.length) return []
@@ -26,7 +27,7 @@ function countConnections(myth, currentId) {
   }).length
 }
 
-export default function MythPopup({ civilization, onClose, onCivSelect, onThemeFilter }) {
+export default function MythPopup({ civilization, onClose, onCivSelect, onThemeFilter, onStartCompare, onOpenCompare }) {
   if (!civilization) return null
   const myth = myths[civilization.mythId]
   const era  = ERAS.find(e => e.id === civilization.era)
@@ -53,15 +54,21 @@ export default function MythPopup({ civilization, onClose, onCivSelect, onThemeF
 
         {/* Illustration banner */}
         <div
-          className="myth-illustration"
-          style={{ '--era-color': era?.color || '#888' }}
+          className={`myth-illustration${myth.imageUrl ? ' has-image' : ''}`}
+          style={{
+            '--era-color': era?.color || '#888',
+            ...(myth.imageUrl ? { backgroundImage: `url(${myth.imageUrl})` } : {}),
+          }}
           aria-label={`Illustration for ${civilization.name}`}
         >
           <div className="myth-illustration-inner">
-            <div className="myth-illustration-glyph">{getGlyph(civilization.id)}</div>
+            <div className="myth-illustration-glyph">{getHtmlGlyph(civilization.id)}</div>
             <div className="myth-illustration-caption">
               {civilization.name}
-              <span className="myth-illustration-note">Illustration — Wikimedia Commons</span>
+              {myth.imageUrl
+                ? <span className="myth-illustration-note">Image — Wikimedia Commons</span>
+                : <span className="myth-illustration-note">Artwork pending — Wikimedia Commons</span>
+              }
             </div>
           </div>
           {connections > 0 && (
@@ -81,6 +88,15 @@ export default function MythPopup({ civilization, onClose, onCivSelect, onThemeF
             <button className="myth-share-btn" onClick={handleShare} title="Copy share link">
               ↗ Share
             </button>
+            {onStartCompare && (
+              <button
+                className="myth-compare-btn"
+                onClick={() => onStartCompare(civilization.id)}
+                title="Compare this myth with another"
+              >
+                ↔ Compare
+              </button>
+            )}
           </div>
           <h2 className="myth-civ-name">{myth.civilization}</h2>
           <h3 className="myth-title">"{myth.title}"</h3>
@@ -113,19 +129,48 @@ export default function MythPopup({ civilization, onClose, onCivSelect, onThemeF
             </div>
           )}
 
+          {myth.relatedTexts?.length > 0 && (
+            <div className="myth-sources">
+              <div className="myth-sources-title">Sources</div>
+              <ul className="myth-sources-list">
+                {myth.relatedTexts.map((src, i) => (
+                  <li key={i} className="myth-source-item">
+                    <span className="source-type">{src.type}</span>
+                    {src.url
+                      ? <a href={src.url} target="_blank" rel="noopener noreferrer" className="source-link">{src.title}</a>
+                      : <span className="source-title">{src.title}</span>
+                    }
+                    {src.author && <span className="source-author">{src.author}</span>}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {related.length > 0 && (
             <div className="myth-related">
               <div className="myth-related-title">Related myths</div>
               <ul className="myth-related-list">
                 {related.map(({ civ, myth: m, shared }) => (
                   <li key={civ.id} className="myth-related-item">
-                    <button
-                      className="myth-related-btn"
-                      onClick={() => { onClose(); onCivSelect(civ) }}
-                    >
-                      <div className="related-civ-name">{civ.name}</div>
-                      <div className="related-myth-title">"{m.title}"</div>
-                    </button>
+                    <div className="myth-related-row">
+                      <button
+                        className="myth-related-btn"
+                        onClick={() => { onClose(); onCivSelect(civ) }}
+                      >
+                        <div className="related-civ-name">{civ.name}</div>
+                        <div className="related-myth-title">"{m.title}"</div>
+                      </button>
+                      {onOpenCompare && (
+                        <button
+                          className="myth-related-compare-btn"
+                          title={`Compare with ${civ.name}`}
+                          onClick={() => onOpenCompare(civilization.id, civ.id)}
+                        >
+                          ↔
+                        </button>
+                      )}
+                    </div>
                     <div className="related-shared-themes">
                       {shared.map(t => (
                         <span key={t} className="related-theme">{t}</span>
@@ -142,14 +187,3 @@ export default function MythPopup({ civilization, onClose, onCivSelect, onThemeF
   )
 }
 
-function getGlyph(id) {
-  const glyphs = {
-    sumer: '𒀭', egypt: '𓂀', 'vedic-india': 'ॐ', 'shang-china': '龍',
-    zoroastrian: '𐬀', canaan: '𐤀', nubia: '𓇯', korea: '☯',
-    'aboriginal-australia': '◉', 'san-people': '✦',
-    greece: 'Ω', maya: '𝕄', rome: 'SPQR', celtic: '᚛', yoruba: '✵',
-    norse: 'ᚱ', 'hindu-puranic': '꩜', 'japan-shinto': '⛩', slavic: '⊕', maori: '᭡',
-    aztec: '☀', inca: '🌄', haudenosaunee: '🐢', polynesian: '🌊',
-  }
-  return glyphs[id] || '◈'
-}

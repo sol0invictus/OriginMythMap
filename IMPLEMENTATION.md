@@ -52,21 +52,21 @@
 - [x] **Theme shortcut bar** — strip below header with 8 pre-set themes (Water & Flood, Sacrifice,
       Cosmic Body, Primordial Void, Sacred Fire, Cosmic Egg, Sky & Earth, Sun & Moon); each shows
       civilization count; clicking toggles the theme filter
-- [ ] **Theme constellation panel** — deferred to Phase 7 (D3-style network graph, significant effort)
+- [x] **Theme constellation panel** — implemented as Phase 11
 
-## Phase 7 — Visual Polish
+## Phase 7 — Visual Polish ✅
 _Goal: make the map feel like a living artifact, not a data tool._
 
-- [ ] **Starfield background** — subtle animated star/particle canvas behind the Leaflet map for
+- [x] **Starfield background** — subtle animated star/particle canvas behind the Leaflet map for
       the prehistoric and ancient eras
-- [ ] **Region pulse on load** — newly loaded era regions animate in with a brief glow/expand
+- [x] **Region pulse on load** — newly loaded era regions animate in with a brief glow/expand
       rather than just a fade
-- [ ] **Era color gradient on slider** — fill the slider track with a gradient of all era colors
+- [x] **Era color gradient on slider** — fill the slider track with a gradient of all era colors
       left to right
-- [ ] **Popup slide-in animation** — popup animates in from the bottom (mobile) or from the right
+- [x] **Popup slide-in animation** — popup animates in from the bottom (mobile) or from the right
       (desktop) rather than appearing instantly
-- [ ] **Custom map marker** for the selected/open civilization (small glowing dot at centroid)
-- [ ] **Dark mode / sepia mode toggle** — sepia palette for an aged-map aesthetic
+- [x] **Custom map marker** for the selected/open civilization (small glowing dot at centroid)
+- [x] **Sepia mode toggle** — sepia palette for an aged-map aesthetic (button in header)
 
 ## Phase 8 — Expanded Civilizations
 _Target: 50+ civilizations. Priority additions:_
@@ -87,58 +87,68 @@ _Target: 50+ civilizations. Priority additions:_
 - [ ] Ancient Indonesia / Java (medieval) — Batara Guru creation myth
 - [ ] Dogon / Mali (medieval West Africa) — Nommo and the cosmic egg
 
-## Phase 9 — Migration Paths
-_Goal: overlay the human migration routes that carried origin myths across the world — showing
-not just where a civilization was, but where its people came from and who they influenced._
+## Phase 9 — Migration Paths ✅
+_Goal: overlay the human migration routes that carried origin myths across the world._
 
-**Data model** — add a `migrations.js` data file:
-```js
-{
-  id: 'out-of-africa',
-  label: 'Out of Africa',
-  dateRange: '70,000–50,000 BCE',
-  description: 'The dispersal of anatomically modern humans from East Africa...',
-  waypoints: [          // ordered [lat, lng] stops along the route
-    [-3, 36],           // East Africa (origin)
-    [15, 43],           // Arabian Peninsula
-    [27, 57],           // Persian Gulf coast
-    [25, 70],           // Indus Valley corridor
-    [22, 100],          // Southeast Asia
-    [-10, 130],         // Sahul (Australia)
-  ],
-  relatedCivIds: ['san-people', 'aboriginal-australia'],
-  era: 'prehistoric',
-}
-```
-
-**UI / rendering:**
 - [x] Animated dashed arrows with arrowheads per segment, flowing in travel direction
 - [x] Glow backing on each segment; pulsing origin dot at route start
-- [x] Wide invisible hit-target per segment (pointer-events: visibleStroke) for easy clicking
+- [x] Wide invisible hit-target per segment for easy clicking
 - [x] Hover tooltip showing route name + date range in route color
 - [x] Clicking opens MigrationPopup with description, myth-connection callout, and links to related civs
-- [x] "Migration Paths" toggle in header — era-aware (shows routes matching current era, or all when showAll)
-- [x] Routes redraw on map pan/zoom via stable `drawMigrRef` pattern
-
-**Routes implemented (8 total):**
-- [x] Out of Africa (prehistoric) — East Africa → Arabian Peninsula → South Asia → SE Asia → Australia
-- [x] Peopling of the Americas (prehistoric) — Siberia → Beringia → Pacific coast → South America
-- [x] Indo-European dispersal — eastern arc (ancient) — Pontic steppe → Persia → Vedic India
-- [x] Indo-European dispersal — western arc (ancient) — Pontic steppe → Greece → Rome → Celtic → Norse → Slavic
-- [x] Austronesian expansion (ancient/classical/medieval) — Taiwan → Philippines → Indonesia → Hawaii → New Zealand
-- [x] Bantu expansion (ancient/classical) — Central Africa → East Africa → Southern Africa
-- [x] Silk Road (classical/medieval) — Chang'an → Central Asia → Persia → Rome
-- [x] Arab maritime routes (medieval) — Arabian Peninsula → East Africa + South Asia → SE Asia
-
-**Why this matters for the myth map:** Migration routes explain the structural similarities between
-myths — why flood narratives appear on every continent, why the cosmic egg appears in both China
-and Finland, why sacrifice myths span Mesoamerica and South Asia. Showing the routes alongside the
-myths makes the connection geographic and visceral, not just academic.
+- [x] "Migration Paths" toggle in header — era-aware; routes live-track during pan/zoom (RAF-throttled)
+- [x] Dash animation phase synced to wall-clock time so redraws don't cause visible resets
+- [x] 8 routes: Out of Africa, Peopling of the Americas, Indo-European (east + west arcs), Austronesian expansion, Bantu expansion, Silk Road, Arab maritime routes
 
 ## Phase 10 — Data & Infrastructure
 - [ ] Split `myths.js` into per-civilization JSON files for lazy loading
-- [ ] Add `relatedTexts` field to myths (primary source references with links)
-- [ ] Wikipedia Commons image integration — `imageUrl` field in myth data, shown in popup banner
-- [ ] Keyboard navigation — arrow keys to step through eras, Escape to close popup
-- [ ] Offline support — service worker caching GeoJSON + myth data
-- [ ] Analytics — track which civilizations and themes are most viewed
+- [x] Add `relatedTexts` field to myths (primary source references with links)
+- [x] Wikipedia Commons image integration — `imageUrl` field in myth data, shown in popup banner (UI ready; add image URLs to `myths.js` to activate)
+- [x] Keyboard navigation — arrow keys to step through eras, Escape to close popup
+- [x] Offline support — service worker (`public/sw.js`) caches GeoJSON files cache-first
+- [x] Analytics — localStorage tracker for civ views and theme uses; "Your journey" section in About modal
+
+---
+
+## Phase 11 — Theme Constellation Panel ✅
+_Goal: a dedicated view that shows the entire myth network as a force-directed graph — the "god's-eye view" of how all myths relate._
+
+- [x] **Force-directed graph** — custom simulation (no d3 dependency); nodes sized by connection count; colors match era
+- [x] **Toggle between map view and constellation view** — "✦ Constellation" button in header; smooth 350ms crossfade transition
+- [x] **Interactive nodes** — hover highlights connected nodes and edges; unconnected nodes dim; click opens MythPopup
+- [x] **Edge labels** — hover any edge to see the shared theme names in a tooltip at the midpoint
+- [x] **Filter by theme** — active `filterTheme` dims non-matching nodes/edges; theme edges glow gold; works with ThemeBar
+- [x] **Era ring layout option** — "◎ Era Rings" toggle places nodes on concentric circles by era; animated transition between layouts; dashed ring guides fade in
+
+## Phase 12 — Comparative Myth Viewer ✅
+_Goal: read two myths side-by-side to discover structural parallels — the academic core of the project._
+
+- [x] **Split-panel view** — `CompareView.jsx`: two myth panels (left/right) with a center score strip; triggered by "↔ Compare" in each MythPopup header or "↔" button on each related-myth item; also accessible via "↔ Compare" in the app header
+- [x] **Shared theme highlights** — themes present in both myths glow gold (`compare-theme-tag.shared`); themes unique to one myth are dimmed (`compare-theme-tag.unique`)
+- [x] **Structural parallels sidebar** — auto-generated list of narrative parallels from a `THEME_PARALLELS` map (25 theme descriptions); shown below the panels; graceful "no shared themes" message when there is no overlap
+- [x] **URL state** — `#civA+civB` hash format; parsed on mount to restore compare view; synced whenever `compareCivs` state changes
+- [x] **"Surprise me" button** — `pickSurprisePair()` finds the top 25 cross-region pairs by shared theme count, picks randomly; available in both the compare modal header and the app header; excludes current pairing to always produce a new result
+- [x] **Pending compare banner** — after clicking "↔ Compare" in a popup, an animated banner prompts "Click any civilization to compare with [Name]"; Escape or "Cancel" exits; clicking a map region completes the pairing
+
+## Phase 13 — Timeline Deep Dive ✅
+_Goal: make time a richer axis — show myth evolution, not just era placement._
+
+- [x] **Century-resolution slider** — "⏱ Timeline" toggle in the slider footer switches from 5-era steps to a continuous year slider (−5000 to 1800 CE, step 100 years); era-color-gradient track with BCE/CE ruler ticks; arrow keys move in 100-year increments; MapView filters visible civs by date-range overlap using `parseYearRange()`; Legend shows civs active at current year; starfield follows the effective era
+- [x] **Myth lineage arrows** — `src/data/influences.js` with 17 documented influence relationships (Sumer→Akkadian→Canaan, Hittite→Greece, Olmec→Maya→Aztec, Vedic→Zoroastrian, etc.); "↯ Lineage" toggle in header; dashed amber arcs with directional arrowheads drawn on a dedicated SVG layer (z:455), redrawn on pan/zoom; hover tooltip shows source → target civ names + description
+- [x] **Era info cards** — `EraInfoCard.jsx`; clicking the ⓘ icon on any era tick in the slider opens a full-screen modal with historical context paragraph, key-developments bullet list, and clickable civilization cards for that era; `src/data/eraInfo.js` holds all content
+- [x] **"Active centuries" bar** — `CenturiesBar` component in `Legend.jsx`; thin proportional bar under each civ name in the expanded era list, scaled against `ERA_YEAR_BOUNDS`; powered by `parseYearRange()`; `src/utils/parseYearRange.js` handles all dateRange string formats
+
+## Phase 14 — Sound & Atmosphere
+_Goal: subtle ambient audio that reinforces the ancient, geographic feel._
+
+- [ ] **Era ambient tracks** — short looping audio clips (distant drums for prehistoric, temple bells for ancient, etc.); autoplay off by default, toggled via a speaker icon
+- [ ] **Region hover sound** — soft, culturally appropriate tone when hovering a region (e.g. sitar drone for India, throat-singing for Central Asia); volume very low, opt-in
+- [ ] **Transition sound** — brief wind/whoosh sound effect when changing eras
+- [ ] All audio off by default; single mute/unmute toggle; no audio loads until user enables it
+
+## Phase 15 — Social & Sharing
+_Goal: make the project easy to share and cite._
+
+- [ ] **Embed widget** — `<iframe>` embed code for any single civilization popup; shows myth summary + glyph, links back to the full map
+- [ ] **Image export** — "Save as image" button renders the current map view + era + any active theme filter to a PNG (using `html2canvas` or Leaflet's built-in print plugin)
+- [ ] **Citation helper** — "Cite this" button in each popup generates a formatted citation (MLA/APA/Chicago) for the myth content with the sources listed in `relatedTexts`
+- [ ] **"Myth of the Day"** — random featured civilization on the landing page; rotates daily using a deterministic date-based seed so all visitors see the same one

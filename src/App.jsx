@@ -7,42 +7,160 @@ import SearchBar from './components/SearchBar'
 import AboutModal from './components/AboutModal'
 import ThemeBar from './components/ThemeBar'
 import MigrationPopup from './components/MigrationPopup'
-import { civilizations } from './data/civilizations'
+import ConstellationView from './components/ConstellationView'
+import CompareView from './components/CompareView'
+import EraInfoCard from './components/EraInfoCard'
+import { civilizations, ERAS } from './data/civilizations'
+import { myths } from './data/myths'
+import { yearToEra } from './utils/parseYearRange'
+import { trackCiv, trackTheme } from './data/analytics'
+
+// Computed once from static data
+const ALL_THEME_COUNT = new Set(civilizations.flatMap(c => myths[c.mythId]?.themes ?? [])).size
+function pickRandomCiv(excludeId = null) {
+  const pool = civilizations.filter(c => c.id !== excludeId)
+  return pool[Math.floor(Math.random() * pool.length)]
+}
+
+// Find the pair of civs (from different regions) that share the most themes.
+// Returns [idA, idB] picked randomly from the top 25 such pairs.
+function pickSurprisePair(excludePair = null) {
+  const eligible = civilizations.filter(c => myths[c.mythId]?.themes?.length)
+  const pairs = []
+  for (let i = 0; i < eligible.length; i++) {
+    for (let j = i + 1; j < eligible.length; j++) {
+      const a = eligible[i], b = eligible[j]
+      if (a.region === b.region) continue
+      const shared = myths[a.mythId].themes.filter(t => myths[b.mythId].themes.includes(t))
+      if (shared.length >= 2) pairs.push({ a, b, n: shared.length })
+    }
+  }
+  pairs.sort((x, y) => y.n - x.n)
+  const pool = pairs.slice(0, 25).filter(p =>
+    !excludePair || !(
+      (p.a.id === excludePair[0] && p.b.id === excludePair[1]) ||
+      (p.a.id === excludePair[1] && p.b.id === excludePair[0])
+    )
+  )
+  if (!pool.length) return null
+  const pick = pool[Math.floor(Math.random() * pool.length)]
+  return [pick.a.id, pick.b.id]
+}
 
 export default function App() {
-  const [selectedEra, setSelectedEra] = useState('ancient')
+  const [selectedEra, setSelectedEra] = useState('bronze-age')
   const [selectedCiv, setSelectedCiv] = useState(null)
   const [showAll, setShowAll] = useState(false)
   const [filterTheme, setFilterTheme] = useState(null)
   const [showAbout, setShowAbout] = useState(false)
   const [showMigrations, setShowMigrations] = useState(false)
   const [selectedMigration, setSelectedMigration] = useState(null)
+  const [showConstellation, setShowConstellation] = useState(false)
+  // Phase 12: compare state
+  const [compareCivs, setCompareCivs] = useState(null)   // [idA, idB] | null
+  const [pendingCompare, setPendingCompare] = useState(null) // civId | null
+  // Phase 13: timeline + influence state
+  const [timelineMode] = useState(true)
+  const [timelineYear, setTimelineYear] = useState(-2000)
+  const [showInfluences, setShowInfluences] = useState(false)
+  const [eraInfoId, setEraInfoId] = useState(null)
+  const [showHint, setShowHint] = useState(() => !localStorage.getItem('omm-visited'))
 
-  // On mount: check URL hash for a shared civilization link
-  useEffect(() => {
-    const id = window.location.hash.replace('#', '')
-    if (id) {
-      const civ = civilizations.find(c => c.id === id)
-      if (civ) {
-        setSelectedCiv(civ)
-        setSelectedEra(civ.era)
-      }
-    }
+  const dismissHint = useCallback(() => {
+    setShowHint(false)
+    localStorage.setItem('omm-visited', '1')
   }, [])
 
-  // Keep URL hash in sync with selected civ
+  // On mount: check URL hash — single civ (#id) or compare pair (#idA+idB)
   useEffect(() => {
-    if (selectedCiv) {
+    const hash = window.location.hash.replace('#', '')
+    if (!hash) return
+    if (hash.includes('+')) {
+      const [id1, id2] = hash.split('+')
+      const c1 = civilizations.find(c => c.id === id1)
+      const c2 = civilizations.find(c => c.id === id2)
+      if (c1 && c2) { setCompareCivs([id1, id2]); return }
+    }
+    const civ = civilizations.find(c => c.id === hash)
+    if (civ) { setSelectedCiv(civ); setSelectedEra(civ.era) }
+  }, [])
+
+  // Keep URL hash in sync
+  useEffect(() => {
+    if (compareCivs) {
+      history.replaceState(null, '', `#${compareCivs[0]}+${compareCivs[1]}`)
+      document.title = 'Comparing Myths | Origin Myth Map'
+    } else if (selectedCiv) {
       history.replaceState(null, '', `#${selectedCiv.id}`)
     } else {
       history.replaceState(null, '', window.location.pathname)
       document.title = 'Origin Myth Map'
     }
-  }, [selectedCiv])
+  }, [selectedCiv, compareCivs])
+
+  // Analytics tracking
+  useEffect(() => { if (selectedCiv)  trackCiv(selectedCiv.id) }, [selectedCiv])
+  useEffect(() => { if (filterTheme)  trackTheme(filterTheme)  }, [filterTheme])
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === 'Escape') {
+        if (compareCivs) { setCompareCivs(null); return }
+        if (pendingCompare) { setPendingCompare(null); return }
+        if (selectedMigration) { setSelectedMigration(null); return }
+        if (selectedCiv) { setSelectedCiv(null); return }
+        if (showAbout) { setShowAbout(false); return }
+        if (showConstellation) { setShowConstellation(false); return }
+        return
+      }
+      if (selectedCiv || showAbout || selectedMigration || compareCivs) return
+      if (timelineMode) {
+        if (e.key === 'ArrowRight') setTimelineYear(y => Math.min(1800, y + 100))
+        if (e.key === 'ArrowLeft')  setTimelineYear(y => Math.max(-5000, y - 100))
+        return
+      }
+      const idx = ERAS.findIndex(era => era.id === selectedEra)
+      if (e.key === 'ArrowRight' && idx < ERAS.length - 1) handleEraChange(ERAS[idx + 1].id)
+      if (e.key === 'ArrowLeft'  && idx > 0)               handleEraChange(ERAS[idx - 1].id)
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [selectedCiv, showAbout, selectedMigration, selectedEra, compareCivs, pendingCompare, timelineMode])
 
   const handleCivClick = useCallback((civ) => {
+    dismissHint()
+    if (pendingCompare && civ.id !== pendingCompare) {
+      setCompareCivs([pendingCompare, civ.id])
+      setPendingCompare(null)
+      return
+    }
     setSelectedCiv(civ)
+  }, [pendingCompare])
+
+  // Begin single-civ compare selection flow (closes popup, waits for second pick)
+  const handleStartCompare = useCallback((civId) => {
+    setSelectedCiv(null)
+    setPendingCompare(civId)
   }, [])
+
+  // Directly open compare view with two known civs
+  const handleOpenCompare = useCallback((idA, idB) => {
+    setSelectedCiv(null)
+    setCompareCivs([idA, idB])
+  }, [])
+
+  const handleRandomMyth = useCallback(() => {
+    const civ = pickRandomCiv(selectedCiv?.id)
+    if (civ) handleCivClick(civ)
+  }, [selectedCiv, handleCivClick])
+
+  // Surprise Me: pick a random cross-cultural pair and open compare
+  const handleSurpriseMe = useCallback(() => {
+    const pair = pickSurprisePair(compareCivs)
+    if (pair) setCompareCivs(pair)
+  }, [compareCivs])
+
 
   const handleClose = useCallback(() => {
     setSelectedCiv(null)
@@ -69,7 +187,10 @@ export default function App() {
       <header className="app-header">
         <div className="header-left">
           <h1 className="app-title">Origin Myth Map</h1>
-          <p className="app-subtitle">Creation stories from across the ancient world</p>
+          <div className="subtitle-row">
+            <p className="app-subtitle">{civilizations.length} civilizations · {ERAS.length} eras · {ALL_THEME_COUNT} themes</p>
+            <button className="random-myth-btn" onClick={handleRandomMyth} title="Open a random myth">✦ Random</button>
+          </div>
         </div>
         <div className="header-center">
           <SearchBar onSelect={handleCivClick} />
@@ -77,7 +198,13 @@ export default function App() {
         <div className="header-right">
           {filterTheme && (
             <div className="active-filter">
-              <span>Theme: <strong>{filterTheme}</strong></span>
+              <span>
+                Theme: <strong>{filterTheme}</strong>
+                {' · '}
+                <span className="filter-count">
+                  {civilizations.filter(c => myths[c.mythId]?.themes?.includes(filterTheme)).length} civs
+                </span>
+              </span>
               <button onClick={() => setFilterTheme(null)}>✕</button>
             </div>
           )}
@@ -90,11 +217,32 @@ export default function App() {
             <span className="show-all-indicator" />
           </button>
           <button
+            className={`constellation-toggle-btn ${showConstellation ? 'active' : ''}`}
+            onClick={() => setShowConstellation(v => !v)}
+            title="Toggle myth network graph"
+          >
+            ✦ Constellation
+          </button>
+          <button
+            className="compare-surprise-header-btn"
+            onClick={handleSurpriseMe}
+            title="Compare two myths that share surprising parallels"
+          >
+            ↔ Compare
+          </button>
+          <button
             className={`migration-toggle-btn ${showMigrations ? 'active' : ''}`}
             onClick={() => setShowMigrations(v => !v)}
             title="Toggle human migration routes"
           >
             ⟶ Migration Paths
+          </button>
+          <button
+            className={`influence-toggle-btn ${showInfluences ? 'active' : ''}`}
+            onClick={() => setShowInfluences(v => !v)}
+            title="Toggle myth lineage arrows — documented cultural borrowing"
+          >
+            ↯ Lineage
           </button>
           <button className="about-btn" onClick={() => setShowAbout(true)} title="About this project">
             ?
@@ -104,29 +252,68 @@ export default function App() {
 
       <ThemeBar filterTheme={filterTheme} onThemeFilter={handleThemeFilter} />
 
-      <main className="app-main">
-        <MapView
-          selectedEra={selectedEra}
-          onCivClick={handleCivClick}
-          showAll={showAll}
-          filterTheme={filterTheme}
-          showMigrations={showMigrations}
-          onMigrationClick={setSelectedMigration}
-        />
-        <Legend
-          selectedEra={selectedEra}
-          onEraClick={handleEraChange}
-          showAll={showAll}
-          filterTheme={filterTheme}
-        />
+      {/* Pending compare banner */}
+      {pendingCompare && (() => {
+        const pCiv = civilizations.find(c => c.id === pendingCompare)
+        return (
+          <div className="compare-pending-banner">
+            <span className="pending-text">
+              ↔ Click any civilization to compare with <strong>{pCiv?.name}</strong>
+            </span>
+            <button className="pending-cancel" onClick={() => setPendingCompare(null)}>✕ Cancel</button>
+          </div>
+        )
+      })()}
+
+      <main className={`app-main${showConstellation ? ' constellation-mode' : ''}`}>
+        <div className="view-panel view-panel-map">
+          <MapView
+            selectedEra={selectedEra}
+            onCivClick={handleCivClick}
+            showAll={showAll}
+            filterTheme={filterTheme}
+            showMigrations={showMigrations}
+            onMigrationClick={setSelectedMigration}
+            selectedCiv={selectedCiv}
+            timelineYear={timelineMode ? timelineYear : null}
+            showInfluences={showInfluences}
+          />
+          <Legend
+            selectedEra={selectedEra}
+            onEraClick={handleEraChange}
+            showAll={showAll}
+            filterTheme={filterTheme}
+            timelineYear={timelineMode ? timelineYear : null}
+            selectedCivId={selectedCiv?.id}
+          />
+          {showHint && (
+            <div className="first-visit-hint">
+              <div className="hint-body">
+                <span className="hint-line">✦ Click any glowing region to explore its creation myth</span>
+                <span className="hint-line">◎ Use the era slider below to travel through time</span>
+              </div>
+              <button className="hint-dismiss" onClick={dismissHint} aria-label="Dismiss">✕</button>
+            </div>
+          )}
+        </div>
+        <div className="view-panel view-panel-constellation">
+          {showConstellation && (
+            <ConstellationView
+              filterTheme={filterTheme}
+              onCivSelect={handleCivClick}
+              onThemeFilter={handleThemeFilter}
+            />
+          )}
+        </div>
       </main>
 
       <footer className="app-footer">
         <TimeSlider
-          selectedEra={selectedEra}
-          onChange={handleEraChange}
-          showAll={showAll || !!filterTheme}
+          timelineYear={timelineYear}
+          onTimelineYear={setTimelineYear}
+          onEraInfoClick={setEraInfoId}
         />
+        <div className="app-byline">Sunny Guha</div>
       </footer>
 
       {selectedCiv && (
@@ -135,10 +322,29 @@ export default function App() {
           onClose={handleClose}
           onCivSelect={handleCivClick}
           onThemeFilter={handleThemeFilter}
+          onStartCompare={handleStartCompare}
+          onOpenCompare={handleOpenCompare}
+        />
+      )}
+
+      {compareCivs && (
+        <CompareView
+          civIds={compareCivs}
+          onClose={() => setCompareCivs(null)}
+          onViewFull={(civ) => { setCompareCivs(null); setSelectedCiv(civ); setSelectedEra(civ.era) }}
+          onSurpriseMe={handleSurpriseMe}
         />
       )}
 
       {showAbout && <AboutModal onClose={() => setShowAbout(false)} />}
+
+      {eraInfoId && (
+        <EraInfoCard
+          eraId={eraInfoId}
+          onClose={() => setEraInfoId(null)}
+          onCivSelect={handleCivClick}
+        />
+      )}
 
       {selectedMigration && (
         <MigrationPopup

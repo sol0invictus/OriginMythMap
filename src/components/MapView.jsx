@@ -4,6 +4,9 @@ import 'leaflet/dist/leaflet.css'
 import { civilizations, ERAS } from '../data/civilizations'
 import { myths } from '../data/myths'
 import { migrations } from '../data/migrations'
+import { influences } from '../data/influences'
+import { parseYearRange } from '../utils/parseYearRange'
+import Starfield from './Starfield'
 
 const TRANSITION_MS = 350
 
@@ -22,7 +25,8 @@ function makeArcPath(pa, pb, idx) {
 
 export default function MapView({
   selectedEra, onCivClick, showAll, filterTheme,
-  showMigrations, onMigrationClick,
+  showMigrations, onMigrationClick, selectedCiv,
+  timelineYear, showInfluences,
 }) {
   const mapRef         = useRef(null)
   const mapInstanceRef = useRef(null)
@@ -34,42 +38,81 @@ export default function MapView({
   const layersRef      = useRef({})
   const layerMetaRef   = useRef({})
   const resonatingRef  = useRef(new Set())
+  const infSvgRef           = useRef(null)
+  const drawInfluRef        = useRef(null)
+  const inflSourcesRef      = useRef(new Set())
+  const inflSourceLayersRef = useRef({})
+  const civMarkerRef        = useRef(null)
   const [hoveredCiv, setHoveredCiv]   = useState(null)
   const [hoveredMig, setHoveredMig]   = useState(null)
+  const [hoveredInfl, setHoveredInfl] = useState(null)
 
   // ── Initialize map once ──────────────────────────────────────
   useEffect(() => {
     if (mapInstanceRef.current) return
 
     const map = L.map(mapRef.current, {
-      center: [20, 10], zoom: 2, minZoom: 2, maxZoom: 8, zoomControl: true,
+      center: [20, 10], zoom: 2, minZoom: 1, maxZoom: 8, zoomControl: true,
+      worldCopyJump: false,
     })
+
+    // Fit the whole world, then lock minZoom so user can't zoom out past it
+    map.fitBounds([[-75, -180], [75, 180]])
+    map.setMinZoom(map.getZoom())
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
-      subdomains: 'abcd', maxZoom: 20,
+      subdomains: 'abcd', maxZoom: 20, noWrap: true,
     }).addTo(map)
 
     mapInstanceRef.current = map
     paneRef.current = map.getPane('overlayPane')
 
-    // Migration SVG — above Leaflet panes (z-index 400), below theme arcs
+    // SVG overlays live INSIDE Leaflet's custom panes (children of
+    // .leaflet-map-pane which carries the CSS zoom-animation transform).
+    // That way they scale and pan in perfect sync with the tiles — no
+    // zoomanim hacks needed.  Coordinates are in layerPoint space so they
+    // don't need to be redrawn during a pan or zoom animation; only after
+    // the gesture ends (moveend / zoomend) do we redraw at updated coords.
+    map.createPane('migPane');  map.getPane('migPane').style.zIndex  = '450'
+    map.createPane('infPane');  map.getPane('infPane').style.zIndex  = '455'
+    map.createPane('arcPane');  map.getPane('arcPane').style.zIndex  = '460'
+    ;['migPane','infPane','arcPane'].forEach(p => {
+      map.getPane(p).style.pointerEvents = 'none'
+    })
+
     const migSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-    migSvg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:450;'
-    mapRef.current.appendChild(migSvg)
+    migSvg.style.cssText = 'position:absolute;top:0;left:0;overflow:visible;pointer-events:none;'
+    map.getPane('migPane').appendChild(migSvg)
     migSvgRef.current = migSvg
 
-    // Theme arc SVG — topmost overlay, above migration paths
+    const infSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+    infSvg.style.cssText = 'position:absolute;top:0;left:0;overflow:visible;pointer-events:none;'
+    map.getPane('infPane').appendChild(infSvg)
+    infSvgRef.current = infSvg
+
     const arcSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-    arcSvg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:460;'
-    mapRef.current.appendChild(arcSvg)
+    arcSvg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;'
+    mapRef.current.appendChild(arcSvg)   // theme arcs keep old approach
     arcSvgRef.current = arcSvg
 
-    const onView = () => { calcArcsRef.current?.(); drawMigrRef.current?.() }
-    map.on('moveend zoomend', onView)
+    const onMoveEnd = () => {
+      calcArcsRef.current?.()
+      drawMigrRef.current?.()
+      drawInfluRef.current?.()
+    }
+    map.on('moveend zoomend', onMoveEnd)
+
+    const onResize = () => {
+      map.fitBounds([[-75, -180], [75, 180]])
+      map.setMinZoom(map.getZoom())
+    }
+    window.addEventListener('resize', onResize)
 
     return () => {
+      window.removeEventListener('resize', onResize)
       migSvg.remove(); migSvgRef.current = null
+      infSvg.remove(); infSvgRef.current = null
       arcSvg.remove(); arcSvgRef.current = null
       map.remove();    mapInstanceRef.current = null
     }
@@ -96,6 +139,13 @@ export default function MapView({
       let visible
       if (filterTheme) {
         visible = civilizations.filter(c => myths[c.mythId]?.themes?.includes(filterTheme))
+      } else if (timelineYear != null) {
+        const MIN_YEAR = -5000
+        visible = civilizations.filter(c => {
+          const [start, end] = parseYearRange(c.dateRange)
+          if (start < MIN_YEAR) return timelineYear <= MIN_YEAR  // prehistoric civs show at leftmost
+          return start <= timelineYear && timelineYear <= end
+        })
       } else if (showAll) {
         visible = civilizations
       } else {
@@ -233,11 +283,13 @@ export default function MapView({
         pane.style.opacity = '1'
         if (arcSvg) arcSvg.style.opacity = '1'
         calcArcs()
+        pane.classList.add('pane-glow-in')
+        setTimeout(() => pane.classList.remove('pane-glow-in'), 750)
       })
     }, TRANSITION_MS)
 
     return () => clearTimeout(timer)
-  }, [selectedEra, onCivClick, showAll, filterTheme])
+  }, [selectedEra, onCivClick, showAll, filterTheme, timelineYear])
 
   // ── Migration path rendering ──────────────────────────────────
   useEffect(() => {
@@ -249,15 +301,15 @@ export default function MapView({
       while (migSvg.firstChild) migSvg.removeChild(migSvg.firstChild)
       if (!showMigrations) return
 
+      const currentEra = timelineYear < -3000 ? 'prehistoric'
+        : timelineYear < -1200 ? 'bronze-age'
+        : timelineYear < -500  ? 'iron-age'
+        : timelineYear < 500   ? 'classical' : 'medieval'
       const visible = showAll
         ? migrations
-        : migrations.filter(m => m.eras.includes(selectedEra))
+        : migrations.filter(m => m.eras.includes(currentEra))
 
       if (visible.length === 0) return
-
-      const container = map.getContainer()
-      migSvg.setAttribute('width',  container.offsetWidth)
-      migSvg.setAttribute('height', container.offsetHeight)
 
       // Build arrow marker defs — one per unique color
       const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
@@ -275,68 +327,90 @@ export default function MapView({
       migSvg.appendChild(defs)
 
       visible.forEach(migration => {
-        const { waypoints, color, id } = migration
+        const { waypoints, color } = migration
         if (waypoints.length < 2) return
 
-        const pts = waypoints.map(([lat, lng]) => {
-          try { return map.latLngToContainerPoint(L.latLng(lat, lng)) }
-          catch { return null }
-        }).filter(Boolean)
+        const safeId   = color.replace('#', 'c')
+        const markerId = `arrow-${safeId}`
+        const PERIOD_MS = 1600
+        const elapsed   = performance.now() % PERIOD_MS
 
-        if (pts.length < 2) return
-
-        const safeId    = color.replace('#', 'c')
-        const markerId  = `arrow-${safeId}`
-
-        // Draw each segment separately so each gets its own arrowhead
-        for (let i = 0; i < pts.length - 1; i++) {
-          const pa = pts[i], pb = pts[i + 1]
-
-          // Glow backing
+        function drawSvgSegment(pa, pb, withArrow) {
           const glow = document.createElementNS('http://www.w3.org/2000/svg', 'line')
           glow.setAttribute('x1', pa.x); glow.setAttribute('y1', pa.y)
           glow.setAttribute('x2', pb.x); glow.setAttribute('y2', pb.y)
-          glow.setAttribute('stroke', color)
-          glow.setAttribute('stroke-width', '5')
+          glow.setAttribute('stroke', color); glow.setAttribute('stroke-width', '5')
           glow.setAttribute('stroke-opacity', '0.12')
           migSvg.appendChild(glow)
 
-          // Animated dashed line
           const line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
           line.setAttribute('x1', pa.x); line.setAttribute('y1', pa.y)
           line.setAttribute('x2', pb.x); line.setAttribute('y2', pb.y)
-          line.setAttribute('stroke', color)
-          line.setAttribute('stroke-width', '1.8')
+          line.setAttribute('stroke', color); line.setAttribute('stroke-width', '1.8')
           line.setAttribute('stroke-opacity', '0.75')
           line.setAttribute('stroke-dasharray', '8 14')
           line.setAttribute('stroke-linecap', 'round')
-          line.setAttribute('marker-end', `url(#${markerId})`)
-          line.setAttribute('class', 'migration-path')
-          line.style.setProperty('--dash-period', '22')
+          if (withArrow) line.setAttribute('marker-end', `url(#${markerId})`)
+          // Sync dash phase to wall-clock so pan/zoom redraws don't hitch
+          line.style.animation = `migrate-flow ${PERIOD_MS}ms linear -${Math.round(elapsed)}ms infinite`
           migSvg.appendChild(line)
 
-          // Invisible hit-target line (wider, pointer-events enabled)
           const hit = document.createElementNS('http://www.w3.org/2000/svg', 'line')
           hit.setAttribute('x1', pa.x); hit.setAttribute('y1', pa.y)
           hit.setAttribute('x2', pb.x); hit.setAttribute('y2', pb.y)
-          hit.setAttribute('stroke', 'transparent')
-          hit.setAttribute('stroke-width', '18')
-          hit.style.cursor = 'pointer'
-          hit.style.pointerEvents = 'stroke'
+          hit.setAttribute('stroke', 'transparent'); hit.setAttribute('stroke-width', '18')
+          hit.style.cursor = 'pointer'; hit.style.pointerEvents = 'stroke'
           hit.addEventListener('mouseenter', () => setHoveredMig(migration))
           hit.addEventListener('mouseleave', () => setHoveredMig(null))
           hit.addEventListener('click', (e) => { e.stopPropagation(); onMigrationClick(migration) })
           migSvg.appendChild(hit)
         }
 
+        for (let i = 0; i < waypoints.length - 1; i++) {
+          const [latA, lngA] = waypoints[i]
+          const [latB, lngB_raw] = waypoints[i + 1]
+          const isLast = i === waypoints.length - 2
+
+          // Normalize lngB to take the shorter arc from lngA (diff stays within ±180)
+          let diff = lngB_raw - lngA
+          while (diff > 180)  diff -= 360
+          while (diff < -180) diff += 360
+          const lngB = lngA + diff
+
+          // Split at antimeridian if the adjusted path crosses ±180
+          let subSegs
+          if (lngB > 180) {
+            const t = (180 - lngA) / (lngB - lngA)
+            const latM = latA + t * (latB - latA)
+            subSegs = [[latA, lngA, latM, 180], [latM, -180, latB, lngB_raw]]
+          } else if (lngB < -180) {
+            const t = (-180 - lngA) / (lngB - lngA)
+            const latM = latA + t * (latB - latA)
+            subSegs = [[latA, lngA, latM, -180], [latM, 180, latB, lngB_raw]]
+          } else {
+            subSegs = [[latA, lngA, latB, lngB]]
+          }
+
+          subSegs.forEach(([la, la_lng, lb, lb_lng], si) => {
+            try {
+              const pa = map.latLngToLayerPoint(L.latLng(la, la_lng))
+              const pb = map.latLngToLayerPoint(L.latLng(lb, lb_lng))
+              const withArrow = isLast && si === subSegs.length - 1
+              drawSvgSegment(pa, pb, withArrow)
+            } catch { /* coords off-screen */ }
+          })
+        }
+
         // Origin dot
-        const origin = pts[0]
-        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-        dot.setAttribute('cx', origin.x); dot.setAttribute('cy', origin.y)
-        dot.setAttribute('r', '5'); dot.setAttribute('fill', color)
-        dot.setAttribute('fill-opacity', '0.8')
-        dot.setAttribute('class', 'migration-origin-dot')
-        migSvg.appendChild(dot)
+        try {
+          const origin = map.latLngToLayerPoint(L.latLng(waypoints[0][0], waypoints[0][1]))
+          const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+          dot.setAttribute('cx', origin.x); dot.setAttribute('cy', origin.y)
+          dot.setAttribute('r', '5'); dot.setAttribute('fill', color)
+          dot.setAttribute('fill-opacity', '0.8')
+          dot.setAttribute('class', 'migration-origin-dot')
+          migSvg.appendChild(dot)
+        } catch { /* skip */ }
       })
 
       // Keep SVG container pointer-events:none; hit-target children override via pointer-events:stroke
@@ -345,13 +419,237 @@ export default function MapView({
 
     drawMigrRef.current = drawMigrations
     drawMigrations()
-  }, [showMigrations, selectedEra, showAll, onMigrationClick])
+  }, [showMigrations, selectedEra, showAll, onMigrationClick, timelineYear])
+
+  // ── Influence arrows ──────────────────────────────────────────
+  useEffect(() => {
+    const map    = mapInstanceRef.current
+    const infSvg = infSvgRef.current
+    if (!map || !infSvg) return
+
+    const COLOR_CROSS  = '#c9a84c'  // gold — cross-era (N-1 → N)
+    const COLOR_SAME   = '#d4704a'  // terracotta — same-era borrowing
+    const COLOR_ORIGIN = '#6ec6e8'  // sky blue — originating region highlight
+    const BOW_FACTOR   = 0.22
+    const eraOrder     = ERAS.map(e => e.id)
+
+    function civActiveAt(civ, year) {
+      const [s, e] = parseYearRange(civ.dateRange)
+      if (s < -5000) return year <= -5000
+      return s <= year && year <= e
+    }
+
+    // ── Layer management (runs on state change, not pan/zoom) ────────
+
+    // Reset previously re-styled layers
+    inflSourcesRef.current.forEach(id => {
+      const meta = layerMetaRef.current[id]
+      if (meta) meta.setStyle({ fillColor: meta.eraColor, color: meta.eraColor, fillOpacity: meta.baseOpacity, weight: 2 })
+    })
+    inflSourcesRef.current.clear()
+
+    // Remove temp layers added for out-of-era source civs
+    Object.values(inflSourceLayersRef.current).forEach(l => map.removeLayer(l))
+    inflSourceLayersRef.current = {}
+
+    if (showInfluences) {
+      const visibleInfl = influences.filter(infl => {
+        const fromCiv = civilizations.find(c => c.id === infl.from)
+        const toCiv   = civilizations.find(c => c.id === infl.to)
+        if (!fromCiv || !toCiv) return false
+        return civActiveAt(toCiv, timelineYear)
+      })
+
+      visibleInfl.forEach(infl => {
+        const meta = layerMetaRef.current[infl.from]
+        if (meta) {
+          // Source civ already on map — restyle it sky-blue
+          meta.setStyle({ fillColor: COLOR_ORIGIN, color: COLOR_ORIGIN, fillOpacity: 0.42, weight: 2.5 })
+          inflSourcesRef.current.add(infl.from)
+        } else if (!inflSourceLayersRef.current[infl.from]) {
+          // Source civ not on map (earlier era) — fetch and add a temp layer
+          const civ = civilizations.find(c => c.id === infl.from)
+          if (!civ) return
+          fetch(`/geojson/${civ.id}.json`)
+            .then(r => r.json())
+            .then(geojson => {
+              if (!mapInstanceRef.current || inflSourceLayersRef.current[infl.from]) return
+              const layer = L.geoJSON(geojson, {
+                style: { color: COLOR_ORIGIN, weight: 2.5, fillColor: COLOR_ORIGIN, fillOpacity: 0.42 },
+                onEachFeature: (_, fl) => {
+                  fl.on({
+                    mouseover: () => { fl.setStyle({ fillOpacity: 0.65, weight: 3 }); setHoveredCiv(civ) },
+                    mouseout:  () => { fl.setStyle({ fillOpacity: 0.42, weight: 2.5 }); setHoveredCiv(null) },
+                    click:     () => onCivClick(civ),
+                  })
+                },
+              }).addTo(map)
+              inflSourceLayersRef.current[infl.from] = layer
+            })
+            .catch(() => {})
+        }
+      })
+    }
+
+    // ── SVG arrow drawing (also called on pan/zoom via ref) ──────────
+
+    function drawInfluences() {
+      while (infSvg.firstChild) infSvg.removeChild(infSvg.firstChild)
+      if (!showInfluences) return
+
+      // Show an arrow when the destination civilization is active at the current year.
+      const visible = influences.filter(infl => {
+        const fromCiv = civilizations.find(c => c.id === infl.from)
+        const toCiv   = civilizations.find(c => c.id === infl.to)
+        if (!fromCiv || !toCiv) return false
+        return civActiveAt(toCiv, timelineYear)
+      })
+
+      const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
+      defs.innerHTML = `
+        <marker id="infl-arrow-cross" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L9,3 z" fill="${COLOR_CROSS}" fill-opacity="0.9"/>
+        </marker>
+        <marker id="infl-arrow-same" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="${COLOR_SAME}" fill-opacity="0.85"/>
+        </marker>
+        <filter id="infl-glow-cross" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="infl-glow-same" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>`
+      infSvg.appendChild(defs)
+
+      visible.forEach((infl, idx) => {
+        const civA = civilizations.find(c => c.id === infl.from)
+        const civB = civilizations.find(c => c.id === infl.to)
+        if (!civA?.centroid || !civB?.centroid) return
+
+        const fromIdx   = eraOrder.indexOf(civA.era)
+        const toIdx     = eraOrder.indexOf(civB.era)
+        const crossEra  = fromIdx < toIdx
+        const color     = crossEra ? COLOR_CROSS : COLOR_SAME
+        const markerId  = crossEra ? 'infl-arrow-cross' : 'infl-arrow-same'
+        const glowId    = crossEra ? 'infl-glow-cross'  : 'infl-glow-same'
+        const strokeW   = crossEra ? '2.2' : '1.5'
+        const dashArray = crossEra ? 'none' : '4 6'
+        const opacity   = crossEra ? '0.82' : '0.65'
+
+        try {
+          const pa = map.latLngToLayerPoint(L.latLng(civA.centroid[0], civA.centroid[1]))
+          const pb = map.latLngToLayerPoint(L.latLng(civB.centroid[0], civB.centroid[1]))
+
+          const mx = (pa.x + pb.x) / 2, my = (pa.y + pb.y) / 2
+          const dx = pb.x - pa.x,       dy = pb.y - pa.y
+          const len = Math.sqrt(dx * dx + dy * dy) || 1
+          const bow = Math.min(len * BOW_FACTOR, 80)
+          const sign = idx % 2 === 0 ? -1 : 1
+          const cpx = mx + (-dy / len) * bow * sign
+          const cpy = my + (dx / len) * bow * sign
+          const d = `M ${pa.x} ${pa.y} Q ${cpx} ${cpy} ${pb.x} ${pb.y}`
+
+          const glow = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+          glow.setAttribute('d', d); glow.setAttribute('fill', 'none')
+          glow.setAttribute('stroke', color); glow.setAttribute('stroke-width', crossEra ? '5' : '3')
+          glow.setAttribute('stroke-opacity', '0.12'); glow.setAttribute('filter', `url(#${glowId})`)
+          infSvg.appendChild(glow)
+
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+          path.setAttribute('d', d); path.setAttribute('fill', 'none')
+          path.setAttribute('stroke', color); path.setAttribute('stroke-width', strokeW)
+          path.setAttribute('stroke-opacity', opacity)
+          if (dashArray !== 'none') path.setAttribute('stroke-dasharray', dashArray)
+          path.setAttribute('marker-end', `url(#${markerId})`)
+          infSvg.appendChild(path)
+
+          const hit = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+          hit.setAttribute('d', d); hit.setAttribute('fill', 'none')
+          hit.setAttribute('stroke', 'transparent'); hit.setAttribute('stroke-width', '14')
+          hit.style.cursor = 'pointer'; hit.style.pointerEvents = 'stroke'
+          hit.addEventListener('mouseenter', () => setHoveredInfl(infl))
+          hit.addEventListener('mouseleave', () => setHoveredInfl(null))
+          infSvg.appendChild(hit)
+        } catch { /* skip if coords off-screen */ }
+      })
+
+      infSvg.style.pointerEvents = 'none'
+    }
+
+    drawInfluRef.current = drawInfluences
+    drawInfluences()
+  }, [showInfluences, timelineYear, showAll, selectedEra])
+
+  // ── Idle ambient pulse ───────────────────────────────────────
+  useEffect(() => {
+    if (selectedCiv || filterTheme || showInfluences) return
+    let timeoutId
+    function pulse() {
+      const ids = Object.keys(layerMetaRef.current)
+      if (ids.length) {
+        const id = ids[Math.floor(Math.random() * ids.length)]
+        const el = layerMetaRef.current[id]?.getEl()
+        if (el) {
+          el.classList.add('idle-pulse')
+          setTimeout(() => el.classList.remove('idle-pulse'), 2000)
+        }
+      }
+      timeoutId = setTimeout(pulse, 3500 + Math.random() * 2500)
+    }
+    timeoutId = setTimeout(pulse, 2500)
+    return () => clearTimeout(timeoutId)
+  }, [selectedCiv, filterTheme, showInfluences])
+
+  // ── Selected civilization glowing marker ─────────────────────
+  useEffect(() => {
+    const map = mapInstanceRef.current
+    if (!map) return
+    if (civMarkerRef.current) { map.removeLayer(civMarkerRef.current); civMarkerRef.current = null }
+    if (!selectedCiv?.centroid) return
+    const [lat, lng] = selectedCiv.centroid
+    const color = ERAS.find(e => e.id === selectedCiv.era)?.color || '#c9981a'
+    civMarkerRef.current = L.circleMarker([lat, lng], {
+      radius: 7,
+      color: '#fff',
+      weight: 2,
+      fillColor: color,
+      fillOpacity: 1,
+      className: 'selected-civ-dot',
+    }).addTo(map)
+  }, [selectedCiv])
+
+  const timelineEra = timelineYear != null
+    ? (timelineYear < -3000 ? 'prehistoric' : timelineYear < -1200 ? 'bronze-age' : timelineYear < -500 ? 'iron-age' : timelineYear < 500 ? 'classical' : 'medieval')
+    : null
+  const showStarfield = !showAll && (
+    (timelineYear == null && (selectedEra === 'prehistoric' || selectedEra === 'bronze-age')) ||
+    (timelineYear != null && (timelineEra === 'prehistoric' || timelineEra === 'bronze-age'))
+  )
+
+  // Derive influence tooltip data outside JSX to keep it readable
+  const inflFromCiv = hoveredInfl ? civilizations.find(c => c.id === hoveredInfl.from) : null
+  const inflToCiv   = hoveredInfl ? civilizations.find(c => c.id === hoveredInfl.to)   : null
+  const inflCrossEra = inflFromCiv && inflToCiv &&
+    ERAS.findIndex(e => e.id === inflFromCiv.era) < ERAS.findIndex(e => e.id === inflToCiv.era)
+  const inflColor = inflCrossEra ? '#c9a84c' : '#d4704a'
+  // First sentence only for the tooltip
+  const inflSnippet = hoveredInfl?.description.match(/[^.!?]+[.!?]/)?.[0] ?? ''
+
+  const currentEra = ERAS.find(e => e.id === selectedEra)
 
   return (
     <div className="map-container">
+      <Starfield active={showStarfield} />
       <div ref={mapRef} className="leaflet-map" />
+      {!showAll && (
+        <div className="era-watermark" style={{ color: currentEra?.color }}>
+          {currentEra?.label}
+        </div>
+      )}
 
-      {hoveredCiv && !hoveredMig && (
+      {hoveredCiv && !hoveredMig && !hoveredInfl && (
         <div className="map-tooltip">
           <strong>{hoveredCiv.name}</strong>
           <span>{hoveredCiv.dateRange}</span>
@@ -364,6 +662,19 @@ export default function MapView({
           <strong>{hoveredMig.label}</strong>
           <span>{hoveredMig.dateRange}</span>
           <span className="tooltip-hint">Click for details</span>
+        </div>
+      )}
+
+      {hoveredInfl && !hoveredMig && (
+        <div className="map-tooltip map-tooltip--influence">
+          <strong>{hoveredInfl.label}</strong>
+          <span style={{ color: inflColor }}>
+            {inflFromCiv?.name} → {inflToCiv?.name}
+          </span>
+          {inflFromCiv?.region && (
+            <span className="tooltip-region" style={{ color: '#6ec6e8' }}>Origin: {inflFromCiv.region}</span>
+          )}
+          <span>{inflSnippet}</span>
         </div>
       )}
     </div>

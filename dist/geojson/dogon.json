@@ -1,0 +1,14 @@
+{
+  "type": "Feature",
+  "properties": { "name": "Dogon" },
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [[
+      [-4.5, 13.0],
+      [-2.0, 13.0],
+      [-1.5, 15.5],
+      [-4.0, 15.5],
+      [-4.5, 13.0]
+    ]]
+  }
+}

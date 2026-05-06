@@ -50,7 +50,7 @@ export const migrations = [
     id: 'indo-european',
     label: 'Indo-European Dispersal',
     dateRange: '3500–1000 BCE',
-    eras: ['ancient'],
+    eras: ['bronze-age'],
     color: '#d4a017',
     description: `The expansion of Proto-Indo-European speaking peoples from the Pontic-Caspian steppe (modern Ukraine and Kazakhstan) — probably the Yamnaya culture — spread their language and mythology in two great arcs: westward into Europe (becoming Greek, Latin, Celtic, Germanic, and Slavic) and southeastward through Persia into South Asia (becoming Vedic Sanskrit and Avestan). This single originating culture explains the striking structural parallels between Greek Theogony, Norse Eddas, Vedic Purusha Sukta, Celtic druidic myth, and Zoroastrian cosmology: sky-father deities, cosmic sacrifice, storm gods slaying sea serpents, and divine twins.`,
     mythLink: 'The structural parallels between Greek (Ouranos), Vedic (Dyaus Pita), Norse (sky myths), Celtic, and Zoroastrian creation stories are not coincidence — they share a common Proto-Indo-European ancestor tradition carried by this migration.',
@@ -70,7 +70,7 @@ export const migrations = [
     id: 'indo-european-west',
     label: 'Indo-European — Western Arc',
     dateRange: '3000–500 BCE',
-    eras: ['ancient'],
+    eras: ['bronze-age', 'iron-age'],
     color: '#c9a840',
     description: `The westward branch of the Indo-European dispersal, spreading from the Pontic steppe into Europe through the Bell Beaker culture and later movements. These migrations introduced Proto-Celtic, Proto-Germanic, Proto-Slavic, and Proto-Italic languages — and with them, the shared mythological substrate visible in Greek, Norse, Celtic, Roman, and Slavic creation traditions.`,
     mythLink: 'Greek Theogony, Norse Eddas, Celtic creation myths, Roman cosmogony, and Slavic creation are all western branches of the same Proto-Indo-European tradition carried by this migration.',
@@ -93,7 +93,7 @@ export const migrations = [
     id: 'austronesian',
     label: 'Austronesian Expansion',
     dateRange: '3000 BCE–1300 CE',
-    eras: ['ancient', 'classical', 'medieval'],
+    eras: ['bronze-age', 'iron-age', 'classical', 'medieval'],
     color: '#4a8ab5',
     description: `The most extraordinary maritime migration in human history. Beginning from Taiwan around 3000 BCE, Austronesian-speaking peoples island-hopped through the Philippines, Indonesia, and Melanesia into the open Pacific in outrigger canoes — navigating by stars, swells, and bird flight with no instruments. They reached Hawaii (~800 CE), Easter Island (~1200 CE), and New Zealand (~1280 CE). This explains why Polynesian, Maori, and Hawaiian cosmologies are so structurally similar — they share a single ancestral tradition. The Kumulipo, Maori Rangi-and-Papa, and Polynesian creation chants are regional variations of the same source.`,
     mythLink: 'Polynesian (Kumulipo), Maori (Rangi and Papa), and Hawaiian cosmologies are not parallel inventions — they are the same tradition carried by this single extraordinary migration across 10,000 miles of open ocean.',
@@ -118,7 +118,7 @@ export const migrations = [
     id: 'bantu',
     label: 'Bantu Expansion',
     dateRange: '1000 BCE–500 CE',
-    eras: ['ancient', 'classical'],
+    eras: ['iron-age', 'classical'],
     color: '#6ab55a',
     description: `The spread of Bantu-speaking agricultural peoples from the Nigeria-Cameroon border region throughout central, eastern, and southern Africa over approximately 1,500 years. This expansion introduced iron-working, agriculture, and — crucially — a shared mythological substrate. Bantu-speaking peoples today include the Zulu, Shona, Kikuyu, and hundreds of other ethnic groups whose creation traditions share common structural features: a high god (Mulungu, Nyambe, Katonda) who creates and then withdraws, primal humans who displease the creator, and myths explaining the origin of death.`,
     mythLink: 'The Yoruba (West Africa) and Zulu (Southern Africa) traditions are connected by this expansion — both descended from a West African origin tradition that spread south and east with Bantu-speaking agriculturalists.',
@@ -130,6 +130,68 @@ export const migrations = [
       [-12, 32],   // Zambia / Malawi corridor
       [-20, 30],   // Zimbabwe plateau
       [-26, 28],   // South Africa (Zulu heartland, arrival)
+    ],
+  },
+
+  {
+    id: 'aryan-migration',
+    label: 'Indo-Aryan Migration',
+    dateRange: '2000–1200 BCE',
+    eras: ['bronze-age', 'iron-age'],
+    color: '#c9841a',
+    description: `The migration of Indo-Iranian speaking peoples from the Pontic-Caspian steppe (related to the Yamnaya culture) southeastward through Central Asia into the Iranian plateau and the Indian subcontinent. Moving through the Bactria-Margiana Archaeological Complex (BMAC) in modern Afghanistan and Uzbekistan, one branch entered Persia to become the Zoroastrian tradition; another crossed the Hindu Kush and descended into the Indus Valley, absorbing and displacing the Harappan civilization. These migrants brought the Proto-Indo-Iranian religion — fire sacrifice, soma ritual, sky-father deity, and warrior epics — which became the Rigveda in India and the Avesta in Persia. Archaeological and genetic evidence confirms a massive Bronze Age migration from the steppe into South Asia around 2000–1500 BCE.`,
+    mythLink: 'Vedic India and Zoroastrian Persia are both direct products of this migration — the Rigveda and the Avesta are two branches of the same Proto-Indo-Iranian ritual tradition, separated when one group turned south into India and another settled Persia.',
+    relatedCivIds: ['yamnaya', 'indus-valley', 'vedic-india', 'zoroastrian'],
+    waypoints: [
+      [47, 40],    // Yamnaya steppe (origin — North Caucasus/Pontic)
+      [44, 55],    // Caspian corridor
+      [40, 62],    // Turkmenistan / BMAC western edge
+      [37, 65],    // Bactria-Margiana (BMAC core)
+      [34, 62],    // Afghan plateau
+      [33, 57],    // → Persia (Zoroastrian branch arrival)
+      [30, 67],    // Makran coast / Balochistan
+      [27, 68],    // Indus Valley corridor
+      [24, 72],    // Vedic heartland (Sarasvati / Ganges plain)
+    ],
+  },
+
+  {
+    id: 'phoenician-expansion',
+    label: 'Phoenician Maritime Expansion',
+    dateRange: '1100–500 BCE',
+    eras: ['iron-age'],
+    color: '#8b44c9',
+    description: `Starting from city-states on the Levantine coast (modern Lebanon), Phoenician sailors established the ancient world's most extensive maritime trading network. Master navigators and shipbuilders, they founded colonies across the Mediterranean: Kition in Cyprus, Carthage in North Africa (814 BCE), Gadir (modern Cádiz) in Spain, and dozens of way stations on the Sicilian, Sardinian, and North African coasts. Their most transformative export was not purple dye or glass but the alphabet — the Phoenician script (itself descended from Canaanite/Ugaritic proto-alphabets) was adapted by the Greeks and became the ancestor of every Western alphabet in use today. Phoenician sailors also carried Canaanite mythological motifs — El and Baal — into the Greek Aegean world, directly influencing early Greek theogony.`,
+    mythLink: 'The Greek figure of Kronos parallels the Canaanite El, and the Baal Cycle\'s storm-god defeating a sea serpent foreshadows Zeus vs. Typhon — these mythological transfers traveled on Phoenician trading ships across the Mediterranean.',
+    relatedCivIds: ['canaan', 'ancient-cyprus', 'greece', 'rome'],
+    waypoints: [
+      [33.5, 35.5], // Sidon / Tyre (origin — Phoenician heartland)
+      [35.0, 33.0], // Cyprus (Kition)
+      [35.2, 25.0], // Crete (way station)
+      [37.5, 15.0], // Sicily (Motya)
+      [36.8, 10.2], // Carthage (North Africa — 814 BCE)
+      [39.0, 9.0],  // Sardinia
+      [39.5, 2.5],  // Balearic Islands
+      [36.5, -6.3], // Gadir / Cádiz (westernmost colony)
+    ],
+  },
+
+  {
+    id: 'nile-corridor',
+    label: 'Nile Cultural Corridor',
+    dateRange: '3000–500 BCE',
+    eras: ['bronze-age', 'iron-age'],
+    color: '#4a9e7a',
+    description: `The Nile River was not merely a waterway but a 6,000-kilometer cultural corridor linking the Mediterranean world to sub-Saharan Africa. For three millennia, Egyptian and Nubian civilizations existed in a dynamic relationship of trade, warfare, and mythological exchange that flowed along its banks. Egypt exported its state religion southward — the cults of Amun, Isis, and Osiris took root at Napata and Meroe — while Nubia sent its own theological innovations northward: the ram-headed Amun cult, which reached its canonical form at Jebel Barkal in Nubia, may have originated there before becoming Egypt's supreme deity. In the 8th century BCE, Nubian pharaohs of the 25th Dynasty ruled all Egypt, bringing Kushite religious practices to the Nile Delta. This was one of history's most sustained two-directional cultural transmissions.`,
+    mythLink: 'The Nubian sky-god and divine kingship theology shaped Egyptian New Kingdom religion as much as Egypt shaped Nubia — the Amun of Karnak and the Amun of Jebel Barkal were in continuous theological dialogue for 2,500 years.',
+    relatedCivIds: ['egypt', 'nubia', 'aksum'],
+    waypoints: [
+      [30.0, 31.0], // Nile Delta / Memphis (origin)
+      [27.0, 31.0], // Upper Egypt / Thebes
+      [24.0, 32.5], // First Cataract (Aswan)
+      [20.0, 33.0], // Kerma / Napata
+      [16.5, 33.0], // Meroe (Nubian heartland)
+      [14.5, 39.0], // Aksum (southern endpoint — Ethiopian highlands)
     ],
   },
 
@@ -155,27 +217,4 @@ export const migrations = [
     ],
   },
 
-  {
-    id: 'arab-maritime',
-    label: 'Arab Maritime Routes',
-    dateRange: '700–1400 CE',
-    eras: ['medieval'],
-    color: '#b56ab5',
-    description: `Arab and Persian merchant-sailors created a maritime network spanning the Indian Ocean from East Africa to Southeast Asia using monsoon winds — a navigation system known since antiquity but systematized and expanded dramatically after the rise of Islam. These routes carried not only trade goods but Islamic cosmology, Quranic creation accounts, and Sufi philosophical interpretations of creation. Arab geographers and traders brought literacy, Islamic scholarship, and new creation narratives to coastal East Africa, South India, the Malabar coast, Sri Lanka, and Maritime Southeast Asia, profoundly shaping the religious traditions of these regions.`,
-    mythLink: 'This route traces the spread of Islamic creation cosmology (the Quran\'s account of Allah creating the heavens and earth in six days, and fashioning Adam from clay) through the Indian Ocean world.',
-    relatedCivIds: ['canaan', 'zoroastrian', 'vedic-india'],
-    waypoints: [
-      [21, 39],    // Jeddah / Red Sea (origin)
-      [13, 44],    // Aden / Gulf of Aden
-      [-4, 40],    // Mombasa (East Africa)
-      [-14, 42],   // Mozambique channel
-      [13, 50],    // Gulf of Oman
-      [22, 59],    // Muscat
-      [20, 65],    // Makran coast
-      [11, 76],    // Malabar coast (Kerala)
-      [6, 80],     // Sri Lanka
-      [4, 100],    // Strait of Malacca
-      [1, 104],    // Singapore / Java Sea
-    ],
-  },
 ]

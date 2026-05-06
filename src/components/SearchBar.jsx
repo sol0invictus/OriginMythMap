@@ -16,6 +16,20 @@ export default function SearchBar({ onSelect }) {
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const ref = useRef(null)
+  const inputRef = useRef(null)
+
+  // `/` key focuses search from anywhere on the page
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === '/' && document.activeElement?.tagName !== 'INPUT' && document.activeElement?.tagName !== 'TEXTAREA') {
+        e.preventDefault()
+        inputRef.current?.focus()
+        setOpen(true)
+      }
+    }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [])
 
   const results = query.length >= 2
     ? civilizations
@@ -45,6 +59,7 @@ export default function SearchBar({ onSelect }) {
       <div className="search-input-wrap">
         <span className="search-icon">⌕</span>
         <input
+          ref={inputRef}
           className="search-input"
           type="text"
           placeholder="Search civilizations, myths, themes…"
