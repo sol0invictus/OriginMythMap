@@ -10,6 +10,24 @@ import Starfield from './Starfield'
 
 const TRANSITION_MS = 350
 
+// Module-level cache: parsed GeoJSON survives unmount/remount and is shared
+// across re-renders so timeline scrubbing doesn't re-fetch + re-parse.
+const geoJsonCache = new Map()
+const inflightFetches = new Map()
+function loadGeoJson(civId) {
+  if (geoJsonCache.has(civId)) return Promise.resolve(geoJsonCache.get(civId))
+  if (inflightFetches.has(civId)) return inflightFetches.get(civId)
+  const p = fetch(`/geojson/${civId}.json`)
+    .then(r => r.json())
+    .then(g => { geoJsonCache.set(civId, g); inflightFetches.delete(civId); return g })
+    .catch(err => { inflightFetches.delete(civId); throw err })
+  inflightFetches.set(civId, p)
+  return p
+}
+
+const prefersReducedMotion = typeof window !== 'undefined' &&
+  window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
 function makeArcPath(pa, pb, idx) {
   const mx = (pa.x + pb.x) / 2
   const my = (pa.y + pb.y) / 2
@@ -54,6 +72,15 @@ export default function MapView({
     const map = L.map(mapRef.current, {
       center: [20, 10], zoom: 2, minZoom: 1, maxZoom: 8, zoomControl: true,
       worldCopyJump: false,
+      // Smoother wheel/pinch zoom
+      zoomSnap: 0.25,
+      zoomDelta: 0.5,
+      wheelPxPerZoomLevel: 100,
+      wheelDebounceTime: 30,
+      zoomAnimation: true,
+      fadeAnimation: true,
+      inertia: true,
+      inertiaDeceleration: 2400,
     })
 
     // Fit the whole world, then lock minZoom so user can't zoom out past it
@@ -91,9 +118,12 @@ export default function MapView({
     map.getPane('infPane').appendChild(infSvg)
     infSvgRef.current = infSvg
 
+    // Theme-arc SVG lives inside arcPane (a Leaflet pane) — using layerPoint
+    // coords means it scales/translates in lockstep with tiles during the
+    // CSS zoom-animation, instead of jumping at zoomend.
     const arcSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-    arcSvg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;'
-    mapRef.current.appendChild(arcSvg)   // theme arcs keep old approach
+    arcSvg.style.cssText = 'position:absolute;top:0;left:0;overflow:visible;pointer-events:none;'
+    map.getPane('arcPane').appendChild(arcSvg)
     arcSvgRef.current = arcSvg
 
     const onMoveEnd = () => {
@@ -118,145 +148,191 @@ export default function MapView({
     }
   }, [])
 
-  // ── Rebuild civilization layers + theme arcs ─────────────────
+  // Track previous mode flags to decide whether to fade or to diff.
+  const prevModeRef = useRef({ selectedEra: null, showAll: false, filterTheme: null })
+
+  // ── Diff civilization layers + redraw theme arcs ─────────────
   useEffect(() => {
     const map  = mapInstanceRef.current
     const pane = paneRef.current
     const arcSvg = arcSvgRef.current
     if (!map || !pane) return
 
-    pane.style.transition = `opacity ${TRANSITION_MS}ms ease`
-    pane.style.opacity = '0'
-    if (arcSvg) { arcSvg.style.transition = `opacity ${TRANSITION_MS}ms ease`; arcSvg.style.opacity = '0' }
+    // Compute the visible civ set under current state
+    let visible
+    if (filterTheme) {
+      visible = civilizations.filter(c => myths[c.mythId]?.themes?.includes(filterTheme))
+    } else if (timelineYear != null) {
+      const MIN_YEAR = -5000
+      visible = civilizations.filter(c => {
+        const [start, end] = parseYearRange(c.dateRange)
+        if (start < MIN_YEAR) return timelineYear <= MIN_YEAR
+        return start <= timelineYear && timelineYear <= end
+      })
+    } else if (showAll) {
+      visible = civilizations
+    } else {
+      visible = civilizations.filter(c => c.era === selectedEra)
+    }
 
-    const timer = setTimeout(() => {
-      Object.values(layersRef.current).forEach(l => { if (map.hasLayer(l)) map.removeLayer(l) })
-      layersRef.current = {}
-      layerMetaRef.current = {}
-      resonatingRef.current.clear()
-      if (arcSvg) while (arcSvg.firstChild) arcSvg.removeChild(arcSvg.firstChild)
+    const wideMode    = showAll || !!filterTheme
+    const baseOpacity = wideMode ? 0.18 : 0.28
+    const visibleIds  = new Set(visible.map(c => c.id))
 
-      let visible
-      if (filterTheme) {
-        visible = civilizations.filter(c => myths[c.mythId]?.themes?.includes(filterTheme))
-      } else if (timelineYear != null) {
-        const MIN_YEAR = -5000
-        visible = civilizations.filter(c => {
-          const [start, end] = parseYearRange(c.dateRange)
-          if (start < MIN_YEAR) return timelineYear <= MIN_YEAR  // prehistoric civs show at leftmost
-          return start <= timelineYear && timelineYear <= end
-        })
-      } else if (showAll) {
-        visible = civilizations
-      } else {
-        visible = civilizations.filter(c => c.era === selectedEra)
+    // A "mode change" (era/showAll/filterTheme) is a deliberate user action and
+    // gets the dramatic crossfade. Timeline-year scrubs just diff inline.
+    const prev = prevModeRef.current
+    const isModeChange = prev.selectedEra !== selectedEra ||
+                         prev.showAll !== showAll ||
+                         prev.filterTheme !== filterTheme
+    prevModeRef.current = { selectedEra, showAll, filterTheme }
+
+    function buildLayer(civ) {
+      const eraColor = ERAS.find(e => e.id === civ.era)?.color || '#fff'
+      let featureLayerRef = null
+
+      const layer = L.geoJSON(geoJsonCache.get(civ.id), {
+        style: { color: eraColor, weight: 2, fillColor: eraColor, fillOpacity: baseOpacity },
+        onEachFeature: (_, fl) => {
+          featureLayerRef = fl
+          fl.on({
+            mouseover: () => {
+              fl.setStyle({ fillOpacity: 0.65, weight: 3 })
+              setHoveredCiv(civ)
+              const myThemes = myths[civ.mythId]?.themes || []
+              Object.entries(layerMetaRef.current).forEach(([otherId, meta]) => {
+                if (otherId === civ.id) return
+                const otherCiv = civilizations.find(c => c.id === otherId)
+                const otherThemes = myths[otherCiv?.mythId]?.themes || []
+                if (!myThemes.some(t => otherThemes.includes(t))) return
+                resonatingRef.current.add(otherId)
+                meta.setStyle({ fillOpacity: meta.baseOpacity + 0.22, weight: 3 })
+                meta.getEl()?.classList.add('resonating')
+              })
+            },
+            mouseout: () => {
+              const meta = layerMetaRef.current[civ.id]
+              fl.setStyle({ fillOpacity: meta?.baseOpacity ?? baseOpacity, weight: 2 })
+              setHoveredCiv(null)
+              resonatingRef.current.forEach(id => {
+                const m = layerMetaRef.current[id]
+                if (!m) return
+                m.setStyle({ fillOpacity: m.baseOpacity, weight: 2 })
+                m.getEl()?.classList.remove('resonating')
+              })
+              resonatingRef.current.clear()
+            },
+            click: () => onCivClick(civ),
+          })
+        },
+      }).addTo(map)
+
+      layersRef.current[civ.id] = layer
+      layerMetaRef.current[civ.id] = {
+        setStyle: s => layer.setStyle(s),
+        getEl:    () => featureLayerRef?.getElement?.(),
+        baseOpacity, eraColor,
       }
+      // Subtle fade-in for newly added layers
+      const el = featureLayerRef?.getElement?.()
+      if (el && !prefersReducedMotion) {
+        el.style.opacity = '0'
+        requestAnimationFrame(() => {
+          el.style.transition = 'opacity 0.45s ease'
+          el.style.opacity = '1'
+        })
+      }
+    }
 
-      const wideMode = showAll || !!filterTheme
+    function applyDiff() {
+      // Remove civs that left the visible set
+      Object.keys(layersRef.current).forEach(id => {
+        if (visibleIds.has(id)) return
+        const layer = layersRef.current[id]
+        const el = layerMetaRef.current[id]?.getEl?.()
+        delete layersRef.current[id]
+        delete layerMetaRef.current[id]
+        resonatingRef.current.delete(id)
+        if (el && !prefersReducedMotion) {
+          el.style.transition = 'opacity 0.3s ease'
+          el.style.opacity = '0'
+          setTimeout(() => { if (map.hasLayer(layer)) map.removeLayer(layer) }, 320)
+        } else {
+          if (map.hasLayer(layer)) map.removeLayer(layer)
+        }
+      })
 
+      // Restyle remaining if baseOpacity changed, then add newcomers
       visible.forEach(civ => {
-        const eraColor    = ERAS.find(e => e.id === civ.era)?.color || '#fff'
-        const baseOpacity = wideMode ? 0.18 : 0.28
-
-        fetch(`/geojson/${civ.id}.json`)
-          .then(r => r.json())
-          .then(geojson => {
+        const meta = layerMetaRef.current[civ.id]
+        if (meta) {
+          if (meta.baseOpacity !== baseOpacity) {
+            meta.baseOpacity = baseOpacity
+            meta.setStyle({ fillOpacity: baseOpacity })
+          }
+          return
+        }
+        // Ensure GeoJSON is in cache, then build
+        loadGeoJson(civ.id)
+          .then(() => {
             if (!mapInstanceRef.current) return
-            let featureLayerRef = null
-
-            const layer = L.geoJSON(geojson, {
-              style: { color: eraColor, weight: 2, fillColor: eraColor, fillOpacity: baseOpacity },
-              onEachFeature: (_, fl) => {
-                featureLayerRef = fl
-                fl.on({
-                  mouseover: () => {
-                    fl.setStyle({ fillOpacity: 0.65, weight: 3 })
-                    setHoveredCiv(civ)
-                    const myThemes = myths[civ.mythId]?.themes || []
-                    Object.entries(layerMetaRef.current).forEach(([otherId, meta]) => {
-                      if (otherId === civ.id) return
-                      const otherCiv = civilizations.find(c => c.id === otherId)
-                      const otherThemes = myths[otherCiv?.mythId]?.themes || []
-                      if (!myThemes.some(t => otherThemes.includes(t))) return
-                      resonatingRef.current.add(otherId)
-                      meta.setStyle({ fillOpacity: meta.baseOpacity + 0.22, weight: 3 })
-                      meta.getEl()?.classList.add('resonating')
-                    })
-                  },
-                  mouseout: () => {
-                    fl.setStyle({ fillOpacity: baseOpacity, weight: 2 })
-                    setHoveredCiv(null)
-                    resonatingRef.current.forEach(id => {
-                      const m = layerMetaRef.current[id]
-                      if (!m) return
-                      m.setStyle({ fillOpacity: m.baseOpacity, weight: 2 })
-                      m.getEl()?.classList.remove('resonating')
-                    })
-                    resonatingRef.current.clear()
-                  },
-                  click: () => onCivClick(civ),
-                })
-              },
-            }).addTo(map)
-
-            layersRef.current[civ.id] = layer
-            layerMetaRef.current[civ.id] = {
-              setStyle: s => layer.setStyle(s),
-              getEl:    () => featureLayerRef?.getElement?.(),
-              baseOpacity, eraColor,
-            }
+            // Skip if no longer visible (e.g. user scrubbed past quickly)
+            if (!visibleIds.has(civ.id)) return
+            if (layersRef.current[civ.id]) return
+            buildLayer(civ)
           })
           .catch(err => console.warn(`GeoJSON load failed for ${civ.id}:`, err))
       })
+    }
 
-      function calcArcs() {
-        const svg = arcSvgRef.current
-        const map = mapInstanceRef.current
-        if (!svg || !map) return
-        while (svg.firstChild) svg.removeChild(svg.firstChild)
-        if (!filterTheme) return
+    function calcArcs() {
+      const svg = arcSvgRef.current
+      const map = mapInstanceRef.current
+      if (!svg || !map) return
+      while (svg.firstChild) svg.removeChild(svg.firstChild)
+      if (!filterTheme) return
 
-        const themed = civilizations.filter(c =>
-          c.centroid && myths[c.mythId]?.themes?.includes(filterTheme)
-        )
-        if (themed.length < 2) return
+      const themed = civilizations.filter(c =>
+        c.centroid && myths[c.mythId]?.themes?.includes(filterTheme)
+      )
+      if (themed.length < 2) return
 
-        const container = map.getContainer()
-        svg.setAttribute('width',  container.offsetWidth)
-        svg.setAttribute('height', container.offsetHeight)
+      const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
+      defs.innerHTML = `<filter id="arc-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+        <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>`
+      svg.appendChild(defs)
 
-        const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
-        defs.innerHTML = `<filter id="arc-glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>`
-        svg.appendChild(defs)
+      let pairIdx = 0
+      for (let i = 0; i < themed.length; i++) {
+        for (let j = i + 1; j < themed.length; j++) {
+          const a = themed[i], b = themed[j]
+          // layerPoint coords → ride the pane's CSS transform during zoom
+          const pa = map.latLngToLayerPoint(L.latLng(a.centroid[0], a.centroid[1]))
+          const pb = map.latLngToLayerPoint(L.latLng(b.centroid[0], b.centroid[1]))
 
-        let pairIdx = 0
-        for (let i = 0; i < themed.length; i++) {
-          for (let j = i + 1; j < themed.length; j++) {
-            const a = themed[i], b = themed[j]
-            const pa = map.latLngToContainerPoint(L.latLng(a.centroid[0], a.centroid[1]))
-            const pb = map.latLngToContainerPoint(L.latLng(b.centroid[0], b.centroid[1]))
+          const glow = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+          glow.setAttribute('d', makeArcPath(pa, pb, pairIdx))
+          glow.setAttribute('fill', 'none')
+          glow.setAttribute('stroke', '#c9981a')
+          glow.setAttribute('stroke-width', '4')
+          glow.setAttribute('stroke-opacity', '0.15')
+          glow.setAttribute('filter', 'url(#arc-glow)')
+          svg.appendChild(glow)
 
-            const glow = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-            glow.setAttribute('d', makeArcPath(pa, pb, pairIdx))
-            glow.setAttribute('fill', 'none')
-            glow.setAttribute('stroke', '#c9981a')
-            glow.setAttribute('stroke-width', '4')
-            glow.setAttribute('stroke-opacity', '0.15')
-            glow.setAttribute('filter', 'url(#arc-glow)')
-            svg.appendChild(glow)
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+          path.setAttribute('d', makeArcPath(pa, pb, pairIdx))
+          path.setAttribute('fill', 'none')
+          path.setAttribute('stroke', '#c9981a')
+          path.setAttribute('stroke-width', '1.5')
+          path.setAttribute('class', 'theme-arc')
 
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-            path.setAttribute('d', makeArcPath(pa, pb, pairIdx))
-            path.setAttribute('fill', 'none')
-            path.setAttribute('stroke', '#c9981a')
-            path.setAttribute('stroke-width', '1.5')
+          if (prefersReducedMotion) {
+            path.setAttribute('stroke-opacity', '0.65')
+          } else {
             path.setAttribute('stroke-opacity', '0')
-            path.setAttribute('class', 'theme-arc')
             svg.appendChild(path)
-
             const len = path.getTotalLength()
             path.style.strokeDasharray  = len
             path.style.strokeDashoffset = len
@@ -264,31 +340,56 @@ export default function MapView({
             path.style.transition = `stroke-dashoffset 1.1s cubic-bezier(0.4,0,0.2,1) ${pairIdx * 60}ms, stroke-opacity 0.4s ease ${pairIdx * 60}ms`
             path.style.strokeOpacity    = '0.65'
             path.style.strokeDashoffset = '0'
-
-            ;[pa, pb].forEach(pt => {
-              const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
-              dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y)
-              dot.setAttribute('r', '4'); dot.setAttribute('fill', '#c9981a')
-              dot.setAttribute('fill-opacity', '0.7'); dot.setAttribute('class', 'arc-dot')
-              svg.appendChild(dot)
-            })
-            pairIdx++
           }
+          if (prefersReducedMotion) svg.appendChild(path)
+
+          ;[pa, pb].forEach(pt => {
+            const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+            dot.setAttribute('cx', pt.x); dot.setAttribute('cy', pt.y)
+            dot.setAttribute('r', '4'); dot.setAttribute('fill', '#c9981a')
+            dot.setAttribute('fill-opacity', '0.7'); dot.setAttribute('class', 'arc-dot')
+            svg.appendChild(dot)
+          })
+          pairIdx++
         }
       }
+    }
 
-      calcArcsRef.current = calcArcs
+    calcArcsRef.current = calcArcs
 
-      requestAnimationFrame(() => {
-        pane.style.opacity = '1'
-        if (arcSvg) arcSvg.style.opacity = '1'
-        calcArcs()
-        pane.classList.add('pane-glow-in')
-        setTimeout(() => pane.classList.remove('pane-glow-in'), 750)
-      })
-    }, TRANSITION_MS)
+    if (isModeChange && !prefersReducedMotion) {
+      // Mode change → dramatic crossfade
+      pane.style.transition = `opacity ${TRANSITION_MS}ms ease`
+      pane.style.opacity = '0'
+      if (arcSvg) { arcSvg.style.transition = `opacity ${TRANSITION_MS}ms ease`; arcSvg.style.opacity = '0' }
 
-    return () => clearTimeout(timer)
+      const timer = setTimeout(() => {
+        // Tear everything down on mode change so we get a clean visual reset
+        Object.values(layersRef.current).forEach(l => { if (map.hasLayer(l)) map.removeLayer(l) })
+        layersRef.current = {}
+        layerMetaRef.current = {}
+        resonatingRef.current.clear()
+        if (arcSvg) while (arcSvg.firstChild) arcSvg.removeChild(arcSvg.firstChild)
+
+        applyDiff()
+
+        requestAnimationFrame(() => {
+          pane.style.opacity = '1'
+          if (arcSvg) arcSvg.style.opacity = '1'
+          calcArcs()
+          pane.classList.add('pane-glow-in')
+          setTimeout(() => pane.classList.remove('pane-glow-in'), 750)
+        })
+      }, TRANSITION_MS)
+
+      return () => clearTimeout(timer)
+    }
+
+    // Timeline-year scrub or reduced-motion: diff in place, no full fade
+    pane.style.opacity = '1'
+    if (arcSvg) arcSvg.style.opacity = '1'
+    applyDiff()
+    calcArcs()
   }, [selectedEra, onCivClick, showAll, filterTheme, timelineYear])
 
   // ── Migration path rendering ──────────────────────────────────

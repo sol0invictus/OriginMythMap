@@ -1584,6 +1584,63 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .constellation-tooltip strong { font-size: 1rem; color: var(--text); }
 .constellation-tooltip span  { font-size: 0.78rem; color: var(--text-dim); }
+.constellation-whisper {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  font-size: 0.82rem;
+  color: #d4c280;
+  max-width: 320px;
+  text-align: center;
+  line-height: 1.35;
+  margin-top: 4px;
+  letter-spacing: 0.01em;
+}
+
+/* ─── Cosmic background — nebula + twinkle ──────────────────── */
+.constellation-cosmic {
+  /* Layered radial gradients evoke a deep-field nebula */
+  background:
+    radial-gradient(ellipse 60% 50% at 22% 28%, rgba(80, 38, 90, 0.16), transparent 60%),
+    radial-gradient(ellipse 70% 55% at 78% 75%, rgba(20, 60, 90, 0.18), transparent 65%),
+    radial-gradient(ellipse 40% 40% at 50% 50%, rgba(120, 90, 30, 0.10), transparent 70%),
+    radial-gradient(circle at 50% 50%, #0a0e14 0%, #050709 80%);
+}
+.constellation-nebula {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(140,80,160,0.05) 0%, transparent 50%),
+    radial-gradient(circle at 70% 70%, rgba(60,140,180,0.05) 0%, transparent 50%);
+  animation: nebula-drift 60s ease-in-out infinite alternate;
+  mix-blend-mode: screen;
+}
+@keyframes nebula-drift {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.85; }
+  50%  { transform: translate(2%, -1%) scale(1.04); opacity: 1; }
+  100% { transform: translate(-2%, 1.5%) scale(1.02); opacity: 0.9; }
+}
+.constellation-svg { position: relative; z-index: 1; }
+.constellation-controls { z-index: 5; }
+.constellation-tooltip { z-index: 6; }
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.15; transform: scale(0.8); }
+  50%      { opacity: 1;    transform: scale(1.1); }
+}
+@keyframes node-twinkle {
+  0%, 100% { opacity: 0.45; }
+  50%      { opacity: 0.85; }
+}
+.constellation-bg-stars circle { transform-box: fill-box; transform-origin: center; }
+
+/* Reduced-motion: stop the nebula drift + twinkles */
+@media (prefers-reduced-motion: reduce) {
+  .constellation-nebula { animation: none !important; }
+  .constellation-bg-stars circle { animation: none !important; }
+  .constellation-cosmic g[opacity] circle[fill="url(#star-glow)"] { animation: none !important; }
+}
 
 /* ─── Mobile responsive ────────────────────────────────────── */
 @media (max-width: 768px) {
@@ -2371,4 +2428,104 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   .era-card-overlay { padding: 0; align-items: flex-end; }
   .era-card { max-height: 92vh; border-radius: 7px 14px 0 0; }
   .era-card-title { font-size: 1.3rem; }
+}
+
+/* ─── Polish: focus-visible, header button parity, compositor hints ─── */
+
+/* One global accent ring keeps focus consistent across heterogeneous controls */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid rgba(201,168,76,0.65);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+.app-header button:focus-visible,
+.theme-bar button:focus-visible {
+  outline-color: rgba(201,168,76,0.85);
+  outline-offset: 1px;
+}
+
+/* Header toolbar — tighter, consistent button typography & sizing.
+   Each toolbar button keeps its own accent color, but height/spacing align. */
+.header-right { gap: 8px; }
+.header-right > button {
+  height: 30px;
+  padding: 0 12px;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: 'Inter', system-ui, sans-serif;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+.header-right > button:active { transform: translateY(0.5px); }
+.show-all-btn .show-all-indicator { width: 6px; height: 6px; }
+
+/* Active-filter chip — match toolbar height */
+.active-filter { height: 30px; padding: 0 10px; }
+
+/* Compositor promotion for elements that animate on open */
+.myth-popup, .compare-modal, .era-card, .first-visit-hint {
+  will-change: transform, opacity;
+}
+.map-tooltip { will-change: opacity; }
+
+/* Floating compare-pending chip — no longer a layout row */
+.compare-pending-banner {
+  position: fixed;
+  top: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 650;
+  background: rgba(10,22,28,0.94);
+  border: 1px solid #2a4a52;
+  border-radius: 999px;
+  padding: 7px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 6px 28px rgba(0,0,0,0.5), 0 0 0 1px rgba(120,200,210,0.06);
+  backdrop-filter: blur(10px);
+  animation: chip-rise 0.32s cubic-bezier(0.22,1,0.36,1);
+  width: auto;
+}
+@keyframes chip-rise {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.compare-pending-banner .pending-text { font-size: 0.8rem; }
+.compare-pending-banner .pending-cancel {
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+/* Smoother Leaflet zoom/pan animation easing.
+   Leaflet sets a CSS transition on .leaflet-pane-map for zoom anim;
+   override its easing for a less linear, more cinematic feel. */
+.leaflet-zoom-anim .leaflet-zoom-animated {
+  transition: transform 250ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.leaflet-fade-anim .leaflet-tile { transition: opacity 200ms linear; }
+
+/* Reduced-motion: kill ambient + decorative animations entirely.
+   Keep meaningful state-change transitions but cap their duration. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.05s !important;
+    scroll-behavior: auto !important;
+  }
+  .idle-pulse,
+  .resonating,
+  .arc-dot,
+  .migration-origin-dot,
+  .selected-civ-dot,
+  .pane-glow-in {
+    animation: none !important;
+  }
+  .leaflet-zoom-anim .leaflet-zoom-animated { transition: none !important; }
 }
