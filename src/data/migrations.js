@@ -54,7 +54,7 @@ export const migrations = [
     color: '#d4a017',
     description: `The expansion of Proto-Indo-European speaking peoples from the Pontic-Caspian steppe (modern Ukraine and Kazakhstan) — probably the Yamnaya culture — spread their language and mythology in two great arcs: westward into Europe (becoming Greek, Latin, Celtic, Germanic, and Slavic) and southeastward through Persia into South Asia (becoming Vedic Sanskrit and Avestan). This single originating culture explains the striking structural parallels between Greek Theogony, Norse Eddas, Vedic Purusha Sukta, Celtic druidic myth, and Zoroastrian cosmology: sky-father deities, cosmic sacrifice, storm gods slaying sea serpents, and divine twins.`,
     mythLink: 'The structural parallels between Greek (Ouranos), Vedic (Dyaus Pita), Norse (sky myths), Celtic, and Zoroastrian creation stories are not coincidence — they share a common Proto-Indo-European ancestor tradition carried by this migration.',
-    relatedCivIds: ['vedic-india', 'zoroastrian', 'greece', 'celtic', 'norse', 'rome', 'slavic'],
+    relatedCivIds: ['vedic-india', 'zoroastrian', 'greece', 'norse', 'rome', 'slavic'],
     waypoints: [
       [48, 38],    // Pontic steppe origin (Ukraine)
       [45, 55],    // Caspian steppe
@@ -74,7 +74,7 @@ export const migrations = [
     color: '#c9a840',
     description: `The westward branch of the Indo-European dispersal, spreading from the Pontic steppe into Europe through the Bell Beaker culture and later movements. These migrations introduced Proto-Celtic, Proto-Germanic, Proto-Slavic, and Proto-Italic languages — and with them, the shared mythological substrate visible in Greek, Norse, Celtic, Roman, and Slavic creation traditions.`,
     mythLink: 'Greek Theogony, Norse Eddas, Celtic creation myths, Roman cosmogony, and Slavic creation are all western branches of the same Proto-Indo-European tradition carried by this migration.',
-    relatedCivIds: ['greece', 'celtic', 'norse', 'rome', 'slavic'],
+    relatedCivIds: ['greece', 'norse', 'rome', 'slavic'],
     waypoints: [
       [48, 38],    // Pontic steppe origin
       [47, 28],    // Romania / Balkans
@@ -141,7 +141,7 @@ export const migrations = [
     color: '#c9841a',
     description: `The migration of Indo-Iranian speaking peoples from the Pontic-Caspian steppe (related to the Yamnaya culture) southeastward through Central Asia into the Iranian plateau and the Indian subcontinent. Moving through the Bactria-Margiana Archaeological Complex (BMAC) in modern Afghanistan and Uzbekistan, one branch entered Persia to become the Zoroastrian tradition; another crossed the Hindu Kush and descended into the Indus Valley, absorbing and displacing the Harappan civilization. These migrants brought the Proto-Indo-Iranian religion — fire sacrifice, soma ritual, sky-father deity, and warrior epics — which became the Rigveda in India and the Avesta in Persia. Archaeological and genetic evidence confirms a massive Bronze Age migration from the steppe into South Asia around 2000–1500 BCE.`,
     mythLink: 'Vedic India and Zoroastrian Persia are both direct products of this migration — the Rigveda and the Avesta are two branches of the same Proto-Indo-Iranian ritual tradition, separated when one group turned south into India and another settled Persia.',
-    relatedCivIds: ['yamnaya', 'indus-valley', 'vedic-india', 'zoroastrian'],
+    relatedCivIds: ['yamnaya', 'vedic-india', 'zoroastrian'],
     waypoints: [
       [47, 40],    // Yamnaya steppe (origin — North Caucasus/Pontic)
       [44, 55],    // Caspian corridor
@@ -163,7 +163,7 @@ export const migrations = [
     color: '#8b44c9',
     description: `Starting from city-states on the Levantine coast (modern Lebanon), Phoenician sailors established the ancient world's most extensive maritime trading network. Master navigators and shipbuilders, they founded colonies across the Mediterranean: Kition in Cyprus, Carthage in North Africa (814 BCE), Gadir (modern Cádiz) in Spain, and dozens of way stations on the Sicilian, Sardinian, and North African coasts. Their most transformative export was not purple dye or glass but the alphabet — the Phoenician script (itself descended from Canaanite/Ugaritic proto-alphabets) was adapted by the Greeks and became the ancestor of every Western alphabet in use today. Phoenician sailors also carried Canaanite mythological motifs — El and Baal — into the Greek Aegean world, directly influencing early Greek theogony.`,
     mythLink: 'The Greek figure of Kronos parallels the Canaanite El, and the Baal Cycle\'s storm-god defeating a sea serpent foreshadows Zeus vs. Typhon — these mythological transfers traveled on Phoenician trading ships across the Mediterranean.',
-    relatedCivIds: ['canaan', 'ancient-cyprus', 'greece', 'rome'],
+    relatedCivIds: ['canaan', 'greece', 'rome'],
     waypoints: [
       [33.5, 35.5], // Sidon / Tyre (origin — Phoenician heartland)
       [35.0, 33.0], // Cyprus (Kition)
@@ -184,7 +184,7 @@ export const migrations = [
     color: '#4a9e7a',
     description: `The Nile River was not merely a waterway but a 6,000-kilometer cultural corridor linking the Mediterranean world to sub-Saharan Africa. For three millennia, Egyptian and Nubian civilizations existed in a dynamic relationship of trade, warfare, and mythological exchange that flowed along its banks. Egypt exported its state religion southward — the cults of Amun, Isis, and Osiris took root at Napata and Meroe — while Nubia sent its own theological innovations northward: the ram-headed Amun cult, which reached its canonical form at Jebel Barkal in Nubia, may have originated there before becoming Egypt's supreme deity. In the 8th century BCE, Nubian pharaohs of the 25th Dynasty ruled all Egypt, bringing Kushite religious practices to the Nile Delta. This was one of history's most sustained two-directional cultural transmissions.`,
     mythLink: 'The Nubian sky-god and divine kingship theology shaped Egyptian New Kingdom religion as much as Egypt shaped Nubia — the Amun of Karnak and the Amun of Jebel Barkal were in continuous theological dialogue for 2,500 years.',
-    relatedCivIds: ['egypt', 'nubia', 'aksum'],
+    relatedCivIds: ['egypt', 'nubia'],
     waypoints: [
       [30.0, 31.0], // Nile Delta / Memphis (origin)
       [27.0, 31.0], // Upper Egypt / Thebes
@@ -203,7 +203,7 @@ export const migrations = [
     color: '#c4904a',
     description: `The network of overland and maritime trade routes connecting East Asia to the Mediterranean, active for over 1,600 years. The Silk Road was not merely a trade route — it was the world's first intercultural transmission network, carrying Buddhism, Zoroastrianism, Manichaeism, Nestorian Christianity, and Islam eastward, and Taoist and Confucian ideas westward. Creation myths and cosmological concepts traveled with merchants, missionaries, and diplomats: Buddhist cosmology reached China alongside silk; Persian dualism influenced Gnostic Christianity; Indian astronomical systems reached Islamic Baghdad and then medieval Europe.`,
     mythLink: 'The Silk Road explains why Chinese (Pangu), Indian (Puranic), and Persian (Zoroastrian) creation concepts show philosophical cross-pollination despite originating independently — centuries of exchange blurred the boundaries.',
-    relatedCivIds: ['shang-china', 'hindu-puranic', 'zoroastrian', 'rome'],
+    relatedCivIds: ['hindu-puranic', 'zoroastrian', 'rome'],
     waypoints: [
       [34, 109],   // Chang'an (Xi'an) — eastern terminus
       [40, 82],    // Dunhuang / Tarim Basin

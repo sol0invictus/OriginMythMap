@@ -126,9 +126,10 @@ public/
   title: "Enuma Elish",
   civilization: "Sumer / Babylon",
   dateRange: "3500–2000 BCE",
-  summary: "...",        // 2–3 sentences shown in popup header
+  category: "chaos-combat", // one of the 8 MYTH_TYPES keys (see Myth categories)
+  summary: "...",        // ~2 tight sentences (the gist) shown in popup header
   fullText: "...",       // multi-paragraph; split on \n\n for rendering
-  themes: ["water", "chaos", "battle"],
+  themes: ["water", "chaos", "battle"], // canonical vocabulary only (see Themes)
   imageUrl: "",          // optional image URL shown in popup banner (Wikimedia Commons)
   relatedTexts: [        // primary sources shown in popup Sources section
     { title: "Enuma Elish", author: "Various", type: "Primary text", url: "https://..." }
@@ -165,7 +166,7 @@ public/
 
 **Adding a new civilization:**
 1. Add entry to `civilizations` array in `civilizations.js` (include `centroid`)
-2. Add myth entry to `myths.js` (include `relatedTexts`, `imageUrl: ""`, `themes`)
+2. Add myth entry to `myths.js` (include `category`, ~2-sentence `summary`, canonical `themes`, `relatedTexts`, `imageUrl: ""`)
 3. Create `public/geojson/<id>.json` (GeoJSON Feature with approximate polygon)
 4. Add glyph to `getGlyph()` in both `MythPopup.jsx` and `ConstellationView.jsx`
 5. Optionally add influence entries to `influences.js`
@@ -175,25 +176,49 @@ public/
 | Key | Label | Range |
 |---|---|---|
 | prehistoric | Prehistoric | Before 3000 BCE |
-| ancient | Ancient | 3000–500 BCE |
+| bronze-age | Bronze Age | 3000–1200 BCE |
+| iron-age | Iron Age | 1200–500 BCE |
 | classical | Classical | 500 BCE–500 CE |
 | medieval | Medieval | 500–1800 CE |
 
-The Early Modern era was deliberately removed; all formerly early-modern civilizations (Aztec, Inca, Haudenosaunee, Polynesian, Lakota, Guaraní, Navajo, Javanese) are now classified as Medieval.
+## Scope: world-origin myths only
 
-## Civilizations (44 total)
+Every civilization on the map must have a genuine **cosmogony** — a "how the world came to be" narrative. Cultures whose famous myth is the origin of a *dynasty, people, deity, crop, or the dead* (rather than the world), and cultures known only from archaeology with no recorded creation narrative, were deliberately removed. When a culture had a real but lesser-known world-creation myth, the entry uses that (e.g. Korea → the Changse-ga; Inuit → the Raven creation; Canaan/Phoenicia → Sanchuniathon's cosmic-egg cosmogony, not the Baal Cycle).
 
-**Prehistoric (9):** Aboriginal Australia, San People, Anatolian Neolithic (Çatalhöyük), Jōmon Japan, Siberian Shamanic (Evenki), Magdalenian (Cave Art Europe), Ancient Melanesia, Yupik/Inuit, Sámi (Lapland)
+## Civilizations (45 total)
 
-**Ancient (11):** Sumer, Ancient Egypt, Vedic India, Shang Dynasty China, Ancient Persia (Zoroastrian), Canaan/Phoenicia, Nubia/Kush, Gojoseon Korea, Olmec, Hittite Empire, Akkadian Empire
+**Prehistoric (4):** Aboriginal Australia, San People, Siberian Shamanic (Evenki), Yupik / Inuit (Arctic)
 
-**Classical (8):** Ancient Greece, Maya, Roman Empire, Celtic Gaul/Britannia, Yoruba, Han Dynasty China, Scythian Steppe, Kingdom of Aksum
+**Bronze Age (6):** Sumer, Ancient Egypt, Nubia / Kush, Old Babylon, Yamnaya (Pontic Steppe), Akkadian Empire
 
-**Medieval (16):** Norse Scandinavia, Hindu Puranic, Japan Shinto, Slavic, Maori, Tibetan Bön/Buddhist, Khmer Empire, Mali Empire, Aztec, Inca, Haudenosaunee, Polynesia/Hawaii, Lakota, Guaraní, Navajo/Diné, Javanese
+**Iron Age (5):** Vedic India, Ancient Persia (Zoroastrian), Canaan / Phoenicia, Korea (Changse-ga), Ancient Israel (Genesis)
+
+**Classical (5):** Ancient Greece, Maya, Roman Empire, Yoruba, Han Dynasty China
+
+**Medieval (25):** Norse Scandinavia, Hindu Puranic, Japan Shinto, Slavic, Maori, Aztec, Inca, Haudenosaunee, Polynesia/Hawaii, Tibetan Bön/Buddhist, Mali Empire/Mande, Lakota, Guaraní, Navajo/Diné, Javanese, Dogon, Fon/Dahomey, Zulu/Nguni Bantu, Muisca, Mapuche, Finnish (Kalevala), Mongolia (Tengrist), Igbo, Hopi (Pueblo), Kuba/Bushongo
+
+## Myth categories (uniform typology)
+
+Every myth carries exactly one `category` — a scholarly cosmogony type (after Eliade / Long / Weigle). The 8 types are defined once in `MYTH_TYPES` (`src/data/civilizations.js`) with a `label`, `tagline`, and `icon`, and shown as a badge in the myth popup:
+
+| Key | Label | Gist |
+|---|---|---|
+| `chaos-combat` | Chaos & Combat | Cosmos wrested from a formless chaos / watery abyss, often through battle |
+| `ex-nihilo` | Ex Nihilo & Sacred Word | A creator makes the world from nothing by word, thought, or breath |
+| `world-parent` | World-Parent Separation | A primal sky-and-earth pair is parted to make room for the world |
+| `cosmic-egg` | Cosmic Egg | The world hatches / unfolds from a primordial egg |
+| `cosmic-sacrifice` | Cosmic Sacrifice | The world is formed from the body of a slain/sacrificed being |
+| `earth-diver` | Earth-Diver | An animal dives into the primal waters to bring up the first earth |
+| `emergence` | Emergence | Beings ascend through a series of lower worlds into this one |
+| `ancestral-animist` | Ancestral & Animist | Creation as an ongoing presence — ancestral beings shape/inhabit a living world; also the home for cultures reconstructed from archaeology and ancestral-founding myths |
+
+When adding a civilization, assign the single best-fit `category` by the dominant cosmogonic mechanism in its myth.
 
 ## Themes
 
-Themes are free-form lowercase strings on myth entries. Current themes in use include:
-`water`, `chaos`, `sacrifice`, `creation-from-body`, `cosmic-egg`, `void`, `fire`, `sun`, `sky-earth`, `flood`, `cycles`, `trickster`, `underworld`, `hero`, `tree`, `serpent`, `word-creation`, `earth-diver`, `twins`, `darkness`, `dance`, `ancestors`, `land`, `dualism`, `transformation`, `ages`, `trance`, `animals`, `song`, `eternal-present`, `moon`, `fertility`.
+Themes are lowercase, hyphenated strings on myth entries, drawn from a **canonical controlled vocabulary** (29 tags — do not invent one-off synonyms; map to the nearest existing tag):
+`ancestors`, `animals`, `battle`, `chaos`, `cosmic-egg`, `creation-from-body`, `cycles`, `dualism`, `earth-diver`, `fertility`, `fire`, `flood`, `hero`, `kingship`, `land`, `maize`, `sacrifice`, `serpent`, `sky-earth`, `sun`, `trance`, `transformation`, `tree`, `trickster`, `twins`, `underworld`, `void`, `water`, `word-creation`.
 
-Theme filtering works by matching `myth.themes.includes(filterTheme)` — keep themes lowercase and hyphenated.
+Each myth uses ~3–6 of these. Theme filtering works by matching `myth.themes.includes(filterTheme)`. `THEME_SHORTCUTS` (the theme bar) references a subset of these keys, so keep them valid.
+
+Summaries (`summary`) are kept to ~2 tight sentences — the gist shown in the popup — with the long-form narrative living in `fullText`.

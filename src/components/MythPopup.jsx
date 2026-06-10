@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { myths } from '../data/myths'
-import { ERAS, civilizations } from '../data/civilizations'
+import { ERAS, civilizations, MYTH_TYPES } from '../data/civilizations'
 import { getHtmlGlyph } from '../utils/glyphs'
 
 function getRelated(myth, currentId) {
@@ -35,6 +35,7 @@ export default function MythPopup({ civilization, onClose, onCivSelect, onThemeF
 
   const related     = getRelated(myth, civilization.id)
   const connections = countConnections(myth, civilization.id)
+  const mythType    = myth.category ? MYTH_TYPES[myth.category] : null
 
   useEffect(() => {
     const prev = document.title
@@ -100,6 +101,18 @@ export default function MythPopup({ civilization, onClose, onCivSelect, onThemeF
           </div>
           <h2 className="myth-civ-name">{myth.civilization}</h2>
           <h3 className="myth-title">"{myth.title}"</h3>
+          {mythType && (
+            <div
+              className="myth-type-badge"
+              title={`Creation-myth type: ${mythType.label} — ${mythType.tagline}`}
+            >
+              <span className="myth-type-icon" aria-hidden="true">{mythType.icon}</span>
+              <span className="myth-type-text">
+                <span className="myth-type-label">{mythType.label}</span>
+                <span className="myth-type-tagline">{mythType.tagline}</span>
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="myth-body">
