@@ -1,7 +1,23 @@
 import { useEffect } from 'react'
 import { myths } from '../data/myths'
 import { ERAS, civilizations, MYTH_TYPES } from '../data/civilizations'
+import { influences } from '../data/influences'
 import { getHtmlGlyph } from '../utils/glyphs'
+
+// Documented cultural lineage for a civilization, drawn from influences.js.
+// ancestors = traditions this one grew out of (to === id);
+// descendants = traditions it shaped (from === id).
+function getLineage(civId) {
+  const ancestors = influences
+    .filter(i => i.to === civId)
+    .map(i => ({ civ: civilizations.find(c => c.id === i.from), label: i.label, key: i.id }))
+    .filter(x => x.civ)
+  const descendants = influences
+    .filter(i => i.from === civId)
+    .map(i => ({ civ: civilizations.find(c => c.id === i.to), label: i.label, key: i.id }))
+    .filter(x => x.civ)
+  return { ancestors, descendants }
+}
 
 function getRelated(myth, currentId) {
   if (!myth?.themes?.length) return []
@@ -36,6 +52,8 @@ export default function MythPopup({ civilization, onClose, onCivSelect, onThemeF
   const related     = getRelated(myth, civilization.id)
   const connections = countConnections(myth, civilization.id)
   const mythType    = myth.category ? MYTH_TYPES[myth.category] : null
+  const { ancestors, descendants } = getLineage(civilization.id)
+  const hasLineage  = ancestors.length > 0 || descendants.length > 0
 
   useEffect(() => {
     const prev = document.title
@@ -157,6 +175,54 @@ export default function MythPopup({ civilization, onClose, onCivSelect, onThemeF
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {hasLineage && (
+            <div className="myth-lineage">
+              <div className="myth-lineage-title">Lineage</div>
+              {ancestors.length > 0 && (
+                <div className="lineage-group">
+                  <div className="lineage-group-label">
+                    <span className="lineage-arrow">⇠</span> Descended from
+                  </div>
+                  <ul className="lineage-list">
+                    {ancestors.map(({ civ, label, key }) => (
+                      <li key={key}>
+                        <button
+                          className="lineage-btn is-ancestor"
+                          onClick={() => { onClose(); onCivSelect(civ) }}
+                          title={`Open ${civ.name}`}
+                        >
+                          <span className="lineage-civ">{civ.name}</span>
+                          <span className="lineage-label">{label}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {descendants.length > 0 && (
+                <div className="lineage-group">
+                  <div className="lineage-group-label">
+                    <span className="lineage-arrow is-descendant">⇢</span> Influenced
+                  </div>
+                  <ul className="lineage-list">
+                    {descendants.map(({ civ, label, key }) => (
+                      <li key={key}>
+                        <button
+                          className="lineage-btn is-descendant"
+                          onClick={() => { onClose(); onCivSelect(civ) }}
+                          title={`Open ${civ.name}`}
+                        >
+                          <span className="lineage-civ">{civ.name}</span>
+                          <span className="lineage-label">{label}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           )}
 

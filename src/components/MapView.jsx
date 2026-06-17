@@ -44,10 +44,11 @@ function makeArcPath(pa, pb, idx) {
 export default function MapView({
   selectedEra, onCivClick, showAll, filterTheme,
   showMigrations, onMigrationClick, selectedCiv,
-  timelineYear, showInfluences,
+  timelineYear, showInfluences, theme,
 }) {
   const mapRef         = useRef(null)
   const mapInstanceRef = useRef(null)
+  const tileLayerRef   = useRef(null)
   const paneRef        = useRef(null)
   const arcSvgRef      = useRef(null)
   const migSvgRef      = useRef(null)
@@ -87,10 +88,7 @@ export default function MapView({
     map.fitBounds([[-75, -180], [75, 180]])
     map.setMinZoom(map.getZoom())
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
-      subdomains: 'abcd', maxZoom: 20, noWrap: true,
-    }).addTo(map)
+    // Tile layer is created/swapped by the theme effect below.
 
     mapInstanceRef.current = map
     paneRef.current = map.getPane('overlayPane')
@@ -147,6 +145,41 @@ export default function MapView({
       map.remove();    mapInstanceRef.current = null
     }
   }, [])
+
+  // ── Tile layer: swap basemap to match light/dark theme ──
+  // Light = a classical "physical atlas" look: Esri World Physical relief
+  // (no labels) + a light Boundaries & Places overlay so we keep modern
+  // country borders and names without an all-in-one atlas tile's clutter.
+  // Dark = CARTO dark (keeps the cosmic feel). No API keys required.
+  useEffect(() => {
+    const map = mapInstanceRef.current
+    if (!map) return
+    // Tear down the previous basemap layer(s)
+    if (tileLayerRef.current) {
+      tileLayerRef.current.forEach(l => map.removeLayer(l))
+      tileLayerRef.current = null
+    }
+    const esri = 'Tiles &copy; Esri'
+    let layers
+    if (theme === 'light') {
+      const base = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}',
+        { attribution: `${esri} &mdash; US National Park Service`, maxZoom: 8, noWrap: true, zIndex: 1 }
+      )
+      const labels = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places_Alternate/MapServer/tile/{z}/{y}/{x}',
+        { attribution: esri, maxZoom: 13, noWrap: true, zIndex: 2 }
+      )
+      layers = [base, labels]
+    } else {
+      layers = [L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
+        subdomains: 'abcd', maxZoom: 20, noWrap: true, zIndex: 1,
+      })]
+    }
+    layers.forEach(l => l.addTo(map))
+    tileLayerRef.current = layers
+  }, [theme])
 
   // Track previous mode flags to decide whether to fade or to diff.
   const prevModeRef = useRef({ selectedEra: null, showAll: false, filterTheme: null })
@@ -742,7 +775,7 @@ export default function MapView({
 
   return (
     <div className="map-container">
-      <Starfield active={showStarfield} />
+      <Starfield active={showStarfield && theme !== 'light'} />
       <div ref={mapRef} className="leaflet-map" />
       {!showAll && (
         <div className="era-watermark" style={{ color: currentEra?.color }}>

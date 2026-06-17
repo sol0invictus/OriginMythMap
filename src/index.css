@@ -12,6 +12,8 @@
   --text:      #dcd6c8;
   --text-dim:  #5e7880;
   --accent:    #b54848;
+  --panel-teal:#0d2228;
+  --teal:      #7ab0b8;
   --radius:    5px;
   font-family: 'EB Garamond', 'Georgia', serif;
   font-size: 16px;
@@ -91,11 +93,11 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   cursor: pointer;
   transition: all 0.2s;
 }
-.show-all-btn:hover { border-color: #7ab0b8; color: var(--text); }
+.show-all-btn:hover { border-color: var(--teal); color: var(--text); }
 .show-all-btn.active {
-  background: #0d2228;
-  border-color: #7ab0b8;
-  color: #7ab0b8;
+  background: var(--panel-teal);
+  border-color: var(--teal);
+  color: var(--teal);
 }
 .show-all-indicator {
   width: 8px;
@@ -104,7 +106,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   background: var(--border);
   transition: background 0.2s;
 }
-.show-all-btn.active .show-all-indicator { background: #7ab0b8; }
+.show-all-btn.active .show-all-indicator { background: var(--teal); }
 
 /* ─── Main / Map ───────────────────────────────────────────── */
 .app-main { position: relative; overflow: hidden; }
@@ -637,9 +639,9 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 .theme-tag:hover {
-  background: #0d2228;
-  border-color: #7ab0b8;
-  color: #7ab0b8;
+  background: var(--panel-teal);
+  border-color: var(--teal);
+  color: var(--teal);
 }
 
 /* ─── Share Button ─────────────────────────────────────────── */
@@ -663,20 +665,20 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #0d2228;
-  border: 1px solid #7ab0b8;
+  background: var(--panel-teal);
+  border: 1px solid var(--teal);
   border-radius: 8px;
   padding: 4px 10px 4px 12px;
   font-family: sans-serif;
   font-size: 0.72rem;
-  color: #7ab0b8;
+  color: var(--teal);
 }
 .active-filter strong { color: var(--text); }
 .filter-count { color: var(--text-dim); font-size: 0.78rem; font-weight: 400; }
 .active-filter button {
   background: none;
   border: none;
-  color: #7ab0b8;
+  color: var(--teal);
   cursor: pointer;
   font-size: 0.7rem;
   line-height: 1;
@@ -770,8 +772,8 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 .search-theme-match {
   font-size: 0.68rem;
   font-family: sans-serif;
-  background: #0d2228;
-  color: #7ab0b8;
+  background: var(--panel-teal);
+  color: var(--teal);
   border-radius: 10px;
   padding: 1px 7px;
 }
@@ -992,7 +994,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .migration-toggle-btn:hover { border-color: #e8884a; color: var(--text); }
 .migration-toggle-btn.active {
-  background: #0d2228;
+  background: var(--panel-teal);
   border-color: #e8884a;
   color: #e8884a;
   box-shadow: 0 0 10px rgba(232,136,74,0.18);
@@ -1516,7 +1518,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .constellation-toggle-btn:hover { border-color: var(--accent); color: var(--text); }
 .constellation-toggle-btn.active {
-  background: #0d2228;
+  background: var(--panel-teal);
   border-color: var(--accent);
   color: var(--accent);
   box-shadow: 0 0 10px rgba(181,72,72,0.2);
@@ -1736,7 +1738,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   transition: all 0.15s;
 }
 .myth-compare-btn:hover { border-color: #4a8890; color: #98c0c8; }
-.myth-compare-btn:active { background: #0d2228; }
+.myth-compare-btn:active { background: var(--panel-teal); }
 
 /* ─── Compare button on related myth items ─────────────────────── */
 .myth-related-compare-btn {
@@ -1754,7 +1756,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 .myth-related-compare-btn:hover {
   border-color: #4a8890;
   color: #98c0c8;
-  background: #0d2228;
+  background: var(--panel-teal);
 }
 
 /* ─── Header Compare button ────────────────────────────────────── */
@@ -2568,3 +2570,324 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   }
   .leaflet-zoom-anim .leaflet-zoom-animated { transition: none !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Lineage section (myth popup)
+   ═══════════════════════════════════════════════════════════════ */
+.myth-lineage {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+.myth-lineage-title {
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-family: sans-serif;
+  margin-bottom: 12px;
+}
+.lineage-group { margin-bottom: 14px; }
+.lineage-group:last-child { margin-bottom: 0; }
+.lineage-group-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.lineage-arrow { color: var(--accent); font-size: 0.95rem; line-height: 1; }
+.lineage-arrow.is-descendant { color: var(--teal); }
+.lineage-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.lineage-btn {
+  width: 100%;
+  text-align: left;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.lineage-btn.is-descendant { border-left-color: var(--teal); }
+.lineage-btn:hover {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 9%, var(--surface2));
+}
+.lineage-btn.is-descendant:hover {
+  border-color: var(--teal);
+  background: color-mix(in srgb, var(--teal) 10%, var(--surface2));
+}
+.lineage-civ { display: block; font-size: 0.85rem; color: var(--text); margin-bottom: 2px; }
+.lineage-label { display: block; font-size: 0.72rem; color: var(--text-dim); font-style: italic; }
+
+/* ═══════════════════════════════════════════════════════════════
+   Constellation legend + redesign polish
+   ═══════════════════════════════════════════════════════════════ */
+.constellation-legend {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  z-index: 6;
+  background: rgba(6,10,11,0.82);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 11px 13px;
+  backdrop-filter: blur(8px);
+  min-width: 138px;
+  pointer-events: none;
+}
+.const-legend-title {
+  font-size: 0.58rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-family: sans-serif;
+  margin-bottom: 8px;
+}
+.const-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.const-legend-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(255,255,255,0.25);
+}
+.const-legend-name { font-size: 0.74rem; color: var(--text); flex: 1; }
+.const-legend-count {
+  font-size: 0.62rem;
+  font-family: sans-serif;
+  color: var(--text-dim);
+}
+.const-legend-foot {
+  margin-top: 9px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-size: 0.6rem;
+  font-family: sans-serif;
+  color: var(--text-dim);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+/* The constellation is always a deep-space view — pin its theme variables
+   to the dark palette so the light theme never bleeds into it. */
+.constellation-container {
+  --bg:         #090d0e;
+  --surface:    #0e1416;
+  --surface2:   #141d20;
+  --border:     #1f2c30;
+  --text:       #dcd6c8;
+  --text-dim:   #5e7880;
+  --accent:     #b54848;
+  --panel-teal: #0d2228;
+  --teal:       #7ab0b8;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Theme toggle button + compare header active state
+   ═══════════════════════════════════════════════════════════════ */
+.theme-toggle-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 0.92rem;
+  line-height: 1;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.theme-toggle-btn:hover { border-color: var(--accent); color: var(--accent); }
+.header-right > button.theme-toggle-btn { padding: 0; width: 30px; justify-content: center; }
+.compare-surprise-header-btn.active {
+  border-color: var(--teal);
+  color: var(--teal);
+  background: var(--panel-teal);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LIGHT THEME
+   Default palette is light; [data-theme="dark"] inherits the dark
+   :root values. Overrides below flip variables + the few surfaces
+   that hardcode dark colours.
+   ═══════════════════════════════════════════════════════════════ */
+[data-theme="light"] {
+  --bg:        #e9e1d0;
+  --surface:   #fbf7ee;
+  --surface2:  #f1e9d8;
+  --border:    #d6c8ad;
+  --text:      #2f2920;
+  --text-dim:  #6e6350;
+  --accent:    #a8392f;
+  --panel-teal:#dceaec;
+  --teal:      #2d6f7a;
+}
+
+/* Map + base chrome */
+[data-theme="light"] .leaflet-container { background: #cdddE2 !important; }
+[data-theme="light"] .leaflet-control-attribution {
+  background: rgba(251,247,238,0.85) !important;
+  color: #8a7f6a !important;
+}
+[data-theme="light"] .leaflet-control-attribution a { color: #6e6350 !important; }
+[data-theme="light"] .map-tooltip { background: rgba(251,247,238,0.96); }
+[data-theme="light"] .app-footer { background: rgba(240,233,219,0.97); }
+[data-theme="light"] .first-visit-hint {
+  background: rgba(251,247,238,0.97);
+  box-shadow: 0 0 24px rgba(168,57,47,0.14), 0 4px 20px rgba(80,60,30,0.16);
+}
+[data-theme="light"] .myth-connections-badge {
+  background: rgba(255,255,255,0.6);
+  border-color: rgba(168,120,40,0.4);
+}
+[data-theme="light"] .myth-illustration.has-image::before { background: rgba(0,0,0,0.32) !important; }
+
+/* Text that was light-on-dark */
+[data-theme="light"] .myth-full-content p { color: #4f4838; }
+[data-theme="light"] .myth-type-label { color: #8a5e16; }
+[data-theme="light"] .myth-type-icon { color: #a06f1c; }
+[data-theme="light"] .myth-type-badge { border-left-color: #b07d1f; }
+
+/* Teal hover/focus accents that used hardcoded light values */
+[data-theme="light"] .search-input-wrap:focus-within { border-color: var(--teal); }
+[data-theme="light"] .myth-related-btn:hover { border-color: var(--teal); background: var(--surface); }
+[data-theme="light"] .theme-shortcut:hover { background: var(--surface); }
+[data-theme="light"] .theme-shortcut.active { background: var(--surface2); }
+[data-theme="light"] .myth-compare-btn:hover,
+[data-theme="light"] .myth-related-compare-btn:hover,
+[data-theme="light"] .compare-surprise-header-btn:hover,
+[data-theme="light"] .pending-cancel:hover { border-color: var(--teal); color: var(--teal); }
+[data-theme="light"] .myth-related-compare-btn:hover { background: var(--panel-teal); }
+[data-theme="light"] .compare-action-btn:hover { border-color: #6f5fb0; color: #5a4aa0; }
+
+/* Modal scrims — warm translucent instead of near-black */
+[data-theme="light"] .myth-popup-overlay,
+[data-theme="light"] .migration-popup-overlay,
+[data-theme="light"] .about-overlay,
+[data-theme="light"] .compare-overlay,
+[data-theme="light"] .era-card-overlay { background: rgba(60,48,28,0.40); }
+
+/* Compare modal dark header gradient */
+[data-theme="light"] .compare-header {
+  background: linear-gradient(135deg, var(--surface2) 0%, var(--surface) 100%);
+}
+[data-theme="light"] .compare-modal {
+  box-shadow: 0 24px 64px rgba(60,45,25,0.3), 0 0 0 1px rgba(45,111,122,0.12);
+}
+
+/* Compare-selection chip */
+[data-theme="light"] .compare-pending-banner {
+  background: rgba(251,247,238,0.96);
+  border-color: var(--teal);
+  box-shadow: 0 6px 28px rgba(80,60,30,0.18), 0 0 0 1px rgba(45,111,122,0.12);
+}
+[data-theme="light"] .pending-text { color: var(--text-dim); }
+[data-theme="light"] .pending-text strong { color: var(--text); }
+[data-theme="light"] .pending-cancel { color: var(--teal); border-color: var(--border); }
+
+/* Influence toggle active warm bg */
+[data-theme="light"] .influence-toggle-btn.active { background: #f4e2d2; }
+
+/* Scrollbar */
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: #b8a888; }
+
+/* ═══════════════════════════════════════════════════════════════
+   Lines-of-Influence network (redesigned constellation view)
+   Always dark — .constellation-container pins the dark palette.
+   ═══════════════════════════════════════════════════════════════ */
+/* StarGraph (Cosmogenesis / Era Rings) fills the view; controls float over it */
+.constellation-stage { position: absolute; inset: 0; }
+
+/* Lineage network is a child of the constellation container, sitting just
+   below the floating Layout controls (hence the top padding). */
+.lineage-net {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 52px;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(40,60,80,0.10), transparent 70%),
+    radial-gradient(circle at 50% 45%, #0b0f14 0%, #070a0e 92%);
+}
+.lineage-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 7px 18px 8px;
+  border-bottom: 1px solid #1c2630;
+  background: rgba(7,11,15,0.92);
+  backdrop-filter: blur(6px);
+  z-index: 4;
+}
+.lh-titles { display: flex; flex-direction: column; gap: 1px; }
+.lh-title { font-family: 'Cinzel', serif; font-size: 0.98rem; letter-spacing: 0.05em; color: #d4c280; }
+.lh-sub { font-family: sans-serif; font-size: 0.7rem; color: #5e7880; }
+.lh-eralegend { display: flex; align-items: center; gap: 13px; flex-wrap: wrap; margin: 0 auto; }
+.lh-era { display: inline-flex; align-items: center; gap: 5px; font-family: sans-serif; font-size: 0.7rem; color: #aab2bd; white-space: nowrap; }
+.lh-era i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; box-shadow: 0 0 5px rgba(255,255,255,0.2); }
+.lh-key { text-align: right; }
+.lh-key-main { font-family: sans-serif; font-size: 0.72rem; color: #c9a24b; }
+.lh-key-dim { font-family: sans-serif; font-size: 0.66rem; color: #5e7880; }
+.lineage-scroll {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.lineage-scroll::-webkit-scrollbar { width: 9px; }
+.lineage-scroll::-webkit-scrollbar-track { background: transparent; }
+.lineage-scroll::-webkit-scrollbar-thumb { background: #243038; border-radius: 4px; }
+.lineage-scroll::-webkit-scrollbar-thumb:hover { background: #34454f; }
+.lineage-svg { display: block; }
+
+.lineage-tooltip {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(10,16,18,0.96);
+  border: 1px solid #2a3a44;
+  border-radius: 8px;
+  padding: 11px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-width: 480px;
+  text-align: center;
+  pointer-events: none;
+  z-index: 8;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+}
+.lineage-tooltip strong { font-size: 0.98rem; color: #f0ead8; }
+.lineage-tt-meta { font-size: 0.74rem; color: #7e93a0; font-family: sans-serif; }
+.lineage-tt-line { font-size: 0.8rem; color: #c3c8d0; font-family: sans-serif; line-height: 1.45; }
+.lineage-tt-key {
+  display: inline-block;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c9a24b;
+  margin-right: 6px;
+}
+.lineage-tt-independent { color: #7e93a0; font-style: italic; }
+.lineage-tt-hint { font-size: 0.68rem; color: #6e8089; font-style: italic; margin-top: 3px; }
+.lineage-edge-tip strong { color: #ffd97a; }

@@ -59,6 +59,9 @@ export default function App() {
   // Phase 12: compare state
   const [compareCivs, setCompareCivs] = useState(null)   // [idA, idB] | null
   const [pendingCompare, setPendingCompare] = useState(null) // civId | null
+  const [compareSelect, setCompareSelect] = useState(false)  // "pick two" mode active
+  // Theme — light by default, persisted; applied to <html data-theme>
+  const [theme, setTheme] = useState(() => localStorage.getItem('omm-theme') || 'light')
   // Phase 13: timeline + influence state
   const [timelineMode] = useState(true)
   const [timelineYear, setTimelineYear] = useState(-2000)
@@ -70,6 +73,13 @@ export default function App() {
     setShowHint(false)
     localStorage.setItem('omm-visited', '1')
   }, [])
+
+  // Apply + persist theme
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('omm-theme', theme)
+  }, [theme])
+  const toggleTheme = useCallback(() => setTheme(t => (t === 'light' ? 'dark' : 'light')), [])
 
   // On mount: check URL hash — single civ (#id) or compare pair (#idA+idB)
   useEffect(() => {
@@ -107,14 +117,14 @@ export default function App() {
     const handler = (e) => {
       if (e.key === 'Escape') {
         if (compareCivs) { setCompareCivs(null); return }
-        if (pendingCompare) { setPendingCompare(null); return }
+        if (pendingCompare || compareSelect) { setPendingCompare(null); setCompareSelect(false); return }
         if (selectedMigration) { setSelectedMigration(null); return }
         if (selectedCiv) { setSelectedCiv(null); return }
         if (showAbout) { setShowAbout(false); return }
         if (showConstellation) { setShowConstellation(false); return }
         return
       }
-      if (selectedCiv || showAbout || selectedMigration || compareCivs) return
+      if (selectedCiv || showAbout || selectedMigration || compareCivs || pendingCompare || compareSelect) return
       if (timelineMode) {
         if (e.key === 'ArrowRight') setTimelineYear(y => Math.min(1800, y + 100))
         if (e.key === 'ArrowLeft')  setTimelineYear(y => Math.max(-5000, y - 100))
@@ -126,22 +136,43 @@ export default function App() {
     }
     window.addEventListener('keydown', handler)
     return () => window.removeEventListener('keydown', handler)
-  }, [selectedCiv, showAbout, selectedMigration, selectedEra, compareCivs, pendingCompare, timelineMode])
+  }, [selectedCiv, showAbout, selectedMigration, selectedEra, compareCivs, pendingCompare, compareSelect, timelineMode])
 
   const handleCivClick = useCallback((civ) => {
     dismissHint()
+    // Second pick of a compare pair → open the comparison
     if (pendingCompare && civ.id !== pendingCompare) {
       setCompareCivs([pendingCompare, civ.id])
       setPendingCompare(null)
+      setCompareSelect(false)
+      return
+    }
+    // First pick while in "choose two" mode
+    if (compareSelect) {
+      setPendingCompare(civ.id)
       return
     }
     setSelectedCiv(civ)
-  }, [pendingCompare])
+  }, [pendingCompare, compareSelect])
 
   // Begin single-civ compare selection flow (closes popup, waits for second pick)
   const handleStartCompare = useCallback((civId) => {
     setSelectedCiv(null)
+    setCompareSelect(false)
     setPendingCompare(civId)
+  }, [])
+
+  // Header "Compare" — enter pick-two-civilizations mode
+  const handleStartCompareFlow = useCallback(() => {
+    setSelectedCiv(null)
+    setSelectedMigration(null)
+    setPendingCompare(null)
+    setCompareSelect(true)
+  }, [])
+
+  const cancelCompareSelect = useCallback(() => {
+    setPendingCompare(null)
+    setCompareSelect(false)
   }, [])
 
   // Directly open compare view with two known civs
@@ -196,6 +227,14 @@ export default function App() {
           <SearchBar onSelect={handleCivClick} />
         </div>
         <div className="header-right">
+          <button
+            className="theme-toggle-btn"
+            onClick={toggleTheme}
+            title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+            aria-label="Toggle light/dark theme"
+          >
+            {theme === 'light' ? '☾' : '☀'}
+          </button>
           {filterTheme && (
             <div className="active-filter">
               <span>
@@ -219,14 +258,14 @@ export default function App() {
           <button
             className={`constellation-toggle-btn ${showConstellation ? 'active' : ''}`}
             onClick={() => setShowConstellation(v => !v)}
-            title="Toggle myth network graph"
+            title="Toggle the lines-of-influence network"
           >
-            ✦ Constellation
+            ✦ Network
           </button>
           <button
-            className="compare-surprise-header-btn"
-            onClick={handleSurpriseMe}
-            title="Compare two myths that share surprising parallels"
+            className={`compare-surprise-header-btn ${compareSelect || pendingCompare ? 'active' : ''}`}
+            onClick={handleStartCompareFlow}
+            title="Pick two civilizations to compare side by side"
           >
             ↔ Compare
           </button>
@@ -252,15 +291,17 @@ export default function App() {
 
       <ThemeBar filterTheme={filterTheme} onThemeFilter={handleThemeFilter} />
 
-      {/* Pending compare banner */}
-      {pendingCompare && (() => {
-        const pCiv = civilizations.find(c => c.id === pendingCompare)
+      {/* Compare selection banner — first pick, then second pick */}
+      {(pendingCompare || compareSelect) && (() => {
+        const pCiv = pendingCompare ? civilizations.find(c => c.id === pendingCompare) : null
         return (
           <div className="compare-pending-banner">
             <span className="pending-text">
-              ↔ Click any civilization to compare with <strong>{pCiv?.name}</strong>
+              {pCiv
+                ? <>↔ Now click a second civilization to compare with <strong>{pCiv.name}</strong></>
+                : <>↔ Click the first civilization to compare</>}
             </span>
-            <button className="pending-cancel" onClick={() => setPendingCompare(null)}>✕ Cancel</button>
+            <button className="pending-cancel" onClick={cancelCompareSelect}>✕ Cancel</button>
           </div>
         )
       })()}
@@ -277,6 +318,7 @@ export default function App() {
             selectedCiv={selectedCiv}
             timelineYear={timelineMode ? timelineYear : null}
             showInfluences={showInfluences}
+            theme={theme}
           />
           <Legend
             selectedEra={selectedEra}

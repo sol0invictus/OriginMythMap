@@ -5,8 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Origin Myth Map</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <script type="module" crossorigin src="/assets/index-QMrWwIgk.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-C1WQLXnW.css">
+    <script>
+      // Set theme before first paint to avoid a flash of the wrong theme.
+      (function () {
+        try {
+          var t = localStorage.getItem('omm-theme') || 'light';
+          document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'light');
+        }
+      })();
+    </script>
+    <script type="module" crossorigin src="/assets/index-_1dqK9Hw.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DLGUgUUv.css">
   </head>
   <body>
     <div id="root"></div>

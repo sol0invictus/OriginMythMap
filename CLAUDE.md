@@ -43,7 +43,10 @@ src/
                          #   parallels sidebar, URL state (#civA+civB), "Surprise me" button
     EraInfoCard.jsx      # full-screen modal with era historical context + civilization cards;
                          #   triggered by ⓘ on era slider ticks
-    ConstellationView.jsx# force-directed myth network graph with era-ring layout option (4 rings)
+    ConstellationView.jsx# three layouts via toggle: Cosmogenesis (cluster by creation archetype) +
+                         #   Era Rings (concentric rings by era) share a theme-affinity star graph
+                         #   (StarGraph); Network is the "Lines of Influence" lineage diagram
+                         #   (LineageNetwork) — family lanes, time left→right, directional influence arrows
     Starfield.jsx        # animated star canvas shown on prehistoric/ancient eras (mix-blend-mode: screen)
     Legend.jsx           # right-side panel — era list or theme-filter mode; scrolls to active civ
     SearchBar.jsx        # ranked search across name, myth title, themes, region; `/` key to focus
@@ -75,7 +78,11 @@ public/
 
 **Theme arcs:** When `filterTheme` is active, `MapView` draws animated SVG gold arcs between all civilization centroids sharing that theme; hovering a region pulses other visible civs sharing any theme with it.
 
-**Constellation view:** `showConstellation` toggle in `App` → `.view-panel` crossfade (CSS opacity transition, map never unmounts) → `ConstellationView` renders force-directed SVG graph with 4 era rings; `switchLayout()` animates between force/rings via RAF over 550ms.
+**Constellation view:** `showConstellation` toggle in `App` (header button labelled "✦ Network") → `.view-panel` crossfade (CSS opacity transition, map never unmounts) → `ConstellationView`, which has a Layout toggle with three views:
+- **Cosmogenesis** & **Era Rings** — the cosmic `StarGraph`: a theme-affinity star map (edges = shared themes) that either clusters nodes by creation archetype or arranges them in concentric era rings, with an animated morph between the two, era legend, hover resonance, and a first-mount "explode from centre" intro.
+- **Network** — `LineageNetwork`, the "Lines of Influence" diagram: civilizations grouped into cultural "families" (connected components of `influences.js` via union-find), each a horizontal lane with x-position = era (time flows left→right) and directional gold arrows = documented influence. Civs with no documented influence appear in an "Independent traditions" grid below; a fixed era-axis header stays put while the body scrolls; hovering a node traces its lineage.
+
+The whole view is always rendered on the dark palette regardless of theme (`.constellation-container` pins the dark CSS variables).
 
 **Compare view:** `compareCivs` state (`[idA, idB] | null`) → `CompareView` modal with split panels, shared-theme highlights, and auto-generated structural parallels. URL hash `#civA+civB` syncs state; "Surprise me" picks the highest-shared-theme cross-region pair.
 
@@ -96,6 +103,8 @@ public/
 - `showInfluences` — influence arrow overlay
 - `eraInfoId` — era key for EraInfoCard modal, or null
 - `showHint` — first-visit onboarding hint (persisted to localStorage key `omm-visited`)
+- `compareSelect` — "pick two civilizations" mode triggered by the header Compare button; first map/graph click sets `pendingCompare`, second opens CompareView
+- `theme` — `'light' | 'dark'`, default light, persisted to localStorage key `omm-theme` and applied as `data-theme` on `<html>` (also set pre-paint by an inline script in `index.html`). Light/dark swap CARTO `light_all`/`dark_all` tiles in MapView. The constellation view pins its own dark palette regardless of theme (`.constellation-container` redeclares the theme CSS variables).
 
 **Map initialization:** Leaflet is controlled imperatively through `mapInstanceRef` and `layersRef` (both `useRef`). On mount: `map.fitBounds([[-75,-180],[75,180]])` sets the initial zoom so the full world fills the viewport; `map.setMinZoom(map.getZoom())` locks that as the floor. A `resize` listener recalculates on window resize. `worldCopyJump: false` and `noWrap: true` on the tile layer prevent duplicate world copies. Never use `react-leaflet`.
 
