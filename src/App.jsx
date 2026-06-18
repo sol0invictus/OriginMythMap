@@ -220,7 +220,7 @@ export default function App() {
           <h1 className="app-title">Origin Myth Map</h1>
           <div className="subtitle-row">
             <p className="app-subtitle">{civilizations.length} civilizations · {ERAS.length} eras · {ALL_THEME_COUNT} themes</p>
-            <button className="random-myth-btn" onClick={handleRandomMyth} title="Open a random myth">✦ Random</button>
+            <button className="random-myth-btn" onClick={handleRandomMyth} title="Open a random myth">Random</button>
           </div>
         </div>
         <div className="header-center">
@@ -260,28 +260,28 @@ export default function App() {
             onClick={() => setShowConstellation(v => !v)}
             title="Toggle the lines-of-influence network"
           >
-            ✦ Network
+            Network
           </button>
           <button
             className={`compare-surprise-header-btn ${compareSelect || pendingCompare ? 'active' : ''}`}
             onClick={handleStartCompareFlow}
             title="Pick two civilizations to compare side by side"
           >
-            ↔ Compare
+            Compare
           </button>
           <button
             className={`migration-toggle-btn ${showMigrations ? 'active' : ''}`}
             onClick={() => setShowMigrations(v => !v)}
             title="Toggle human migration routes"
           >
-            ⟶ Migration Paths
+            Migration Paths
           </button>
           <button
             className={`influence-toggle-btn ${showInfluences ? 'active' : ''}`}
             onClick={() => setShowInfluences(v => !v)}
             title="Toggle myth lineage arrows — documented cultural borrowing"
           >
-            ↯ Lineage
+            Lineage
           </button>
           <button className="about-btn" onClick={() => setShowAbout(true)} title="About this project">
             ?
@@ -298,8 +298,8 @@ export default function App() {
           <div className="compare-pending-banner">
             <span className="pending-text">
               {pCiv
-                ? <>↔ Now click a second civilization to compare with <strong>{pCiv.name}</strong></>
-                : <>↔ Click the first civilization to compare</>}
+                ? <>Now click a second civilization to compare with <strong>{pCiv.name}</strong></>
+                : <>Click the first civilization to compare</>}
             </span>
             <button className="pending-cancel" onClick={cancelCompareSelect}>✕ Cancel</button>
           </div>

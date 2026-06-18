@@ -303,7 +303,7 @@ function StarGraph({ layout, filterTheme, onCivSelect }) {
                 strokeOpacity={isRings ? 0.18 : 0} strokeWidth={1} strokeDasharray="2 7"
                 style={{ transition: 'stroke-opacity 0.4s ease' }} />
               <text x={w / 2} y={h / 2 - r - 9} textAnchor="middle" fontSize="9.5"
-                fontFamily="'Cinzel', serif" letterSpacing="0.16em" fill={eo?.color || '#888'}
+                fontFamily="Fraunces, Georgia, serif" letterSpacing="0.16em" fill={eo?.color || '#888'}
                 fillOpacity={isRings ? 0.7 : 0}
                 style={{ transition: 'fill-opacity 0.4s ease', pointerEvents: 'none', userSelect: 'none' }}>
                 {eo?.label?.toUpperCase()}
@@ -319,7 +319,7 @@ function StarGraph({ layout, filterTheme, onCivSelect }) {
           const ly = y + Math.sin(angle) * lr * 1.05
           return (
             <text key={arch.id} x={lx} y={ly} textAnchor="middle" dominantBaseline="middle"
-              fontSize="10.5" fontFamily="'Cinzel', serif" letterSpacing="0.18em" fill="#d4c280"
+              fontSize="10.5" fontFamily="Fraunces, Georgia, serif" letterSpacing="0.18em" fill="#d4c280"
               fillOpacity={layout === 'cosmogenesis' ? 0.78 : 0}
               style={{ transition: 'fill-opacity 0.5s ease', textTransform: 'uppercase', pointerEvents: 'none' }}>
               {arch.glyph}  {arch.label.toUpperCase()}
@@ -360,7 +360,7 @@ function StarGraph({ layout, filterTheme, onCivSelect }) {
                 <g transform={`translate(${mx},${my})`} style={{ pointerEvents: 'none' }}>
                   <rect x={-labelW / 2} y={-10} width={labelW} height={20} rx={6}
                     fill="rgba(13,16,24,0.95)" stroke="#3a3220" strokeWidth={1} />
-                  <text textAnchor="middle" y={4} fontSize="9" fontFamily="sans-serif" fill="#ffd97a" letterSpacing="0.06em">
+                  <text textAnchor="middle" y={4} fontSize="9" fontFamily="Spectral, Georgia, serif" fill="#ffd97a" letterSpacing="0.06em">
                     {labelText}
                   </text>
                 </g>
@@ -414,14 +414,14 @@ function StarGraph({ layout, filterTheme, onCivSelect }) {
               {isRings && (
                 <text transform={`rotate(${radialDeg})`} x={flip ? -radialOff : radialOff}
                   textAnchor={flip ? 'end' : 'start'} dominantBaseline="central" fontSize="8.5"
-                  fontFamily="'EB Garamond', serif" fill="#d8dae6"
+                  fontFamily="Spectral, Georgia, serif" fill="#d8dae6"
                   fillOpacity={hoveredNode ? (isHovered || isNeighbour ? 1 : 0.28) : 0.82}
                   style={{ pointerEvents: 'none', userSelect: 'none', transition: 'fill-opacity 0.15s' }}>
                   {label}
                 </text>
               )}
               {showHoverLabel && (
-                <text textAnchor="middle" y={dr * 1.95 + 7} fontSize="10" fontFamily="'EB Garamond', serif"
+                <text textAnchor="middle" y={dr * 1.95 + 7} fontSize="10" fontFamily="Spectral, Georgia, serif"
                   fill="#f0ead8" fillOpacity={1} style={{ pointerEvents: 'none', userSelect: 'none' }}>
                   {label}
                 </text>
@@ -652,8 +652,8 @@ function LineageNetwork({ onCivSelect }) {
               {lanes.map((lane, i) => (
                 <g key={i}>
                   {i > 0 && <line x1={16} y1={lane.y0} x2={contentW - LN_PAD_R} y2={lane.y0} stroke="#243038" strokeOpacity="0.55" strokeWidth="1" strokeDasharray="2 6" />}
-                  <text x={16} y={lane.cy - 4} fontFamily="'Cinzel', serif" fontSize="11" fill="#d4c280" fillOpacity="0.92">{lane.name}</text>
-                  <text x={16} y={lane.cy + 12} fontFamily="sans-serif" fontSize="8.5" fill="#5e7880">{lane.members.length} traditions</text>
+                  <text x={16} y={lane.cy - 4} fontFamily="Fraunces, Georgia, serif" fontSize="11" fill="#d4c280" fillOpacity="0.92">{lane.name}</text>
+                  <text x={16} y={lane.cy + 12} fontFamily="Spectral, Georgia, serif" fontSize="8.5" fill="#5e7880">{lane.members.length} traditions</text>
                 </g>
               ))}
               {influences.map((inf, i) => {
@@ -676,8 +676,8 @@ function LineageNetwork({ onCivSelect }) {
                 )
               })}
               <line x1={16} y1={indep.y0} x2={contentW - LN_PAD_R} y2={indep.y0} stroke="#243038" strokeOpacity="0.55" strokeWidth="1" strokeDasharray="2 6" />
-              <text x={16} y={indep.y0 + 26} fontFamily="'Cinzel', serif" fontSize="11" fill="#d4c280" fillOpacity="0.92">Independent traditions</text>
-              <text x={16} y={indep.y0 + 42} fontFamily="sans-serif" fontSize="8.5" fill="#5e7880">no documented transmission</text>
+              <text x={16} y={indep.y0 + 26} fontFamily="Fraunces, Georgia, serif" fontSize="11" fill="#d4c280" fillOpacity="0.92">Independent traditions</text>
+              <text x={16} y={indep.y0 + 42} fontFamily="Spectral, Georgia, serif" fontSize="8.5" fill="#5e7880">no documented transmission</text>
               {civilizations.map(c => {
                 const p = pos[c.id]
                 if (!p) return null
@@ -695,7 +695,7 @@ function LineageNetwork({ onCivSelect }) {
                     <circle r={r} fill="#0c1014" stroke={col} strokeWidth={isHov ? 3 : 2} />
                     <text textAnchor="middle" dominantBaseline="central" fontSize={glyph.length > 1 ? 9 : 12}
                       fontFamily="'Segoe UI Emoji','Noto Sans',serif" fill={col} style={{ pointerEvents: 'none', userSelect: 'none' }}>{glyph}</text>
-                    <text textAnchor="middle" y={r + 13} fontSize="10" fontFamily="'EB Garamond', serif"
+                    <text textAnchor="middle" y={r + 13} fontSize="10" fontFamily="Spectral, Georgia, serif"
                       fill={isHov ? '#f0ead8' : '#c3c8d0'} fillOpacity={isHov ? 1 : 0.88} style={{ pointerEvents: 'none', userSelect: 'none' }}>{name}</text>
                   </g>
                 )
@@ -776,11 +776,11 @@ export default function ConstellationView({ filterTheme, onCivSelect }) {
       <div className="constellation-controls">
         <span className="constellation-controls-label">Layout</span>
         <button className={`const-layout-btn ${view === 'cosmogenesis' ? 'active' : ''}`}
-          onClick={() => setView('cosmogenesis')} title="Group myths by creation archetype">✶ Cosmogenesis</button>
+          onClick={() => setView('cosmogenesis')} title="Group myths by creation archetype">Cosmogenesis</button>
         <button className={`const-layout-btn ${view === 'network' ? 'active' : ''}`}
-          onClick={() => setView('network')} title="Documented lines of influence between traditions">✦ Network</button>
+          onClick={() => setView('network')} title="Documented lines of influence between traditions">Network</button>
         <button className={`const-layout-btn ${view === 'rings' ? 'active' : ''}`}
-          onClick={() => setView('rings')} title="Group traditions into concentric era rings">◎ Era Rings</button>
+          onClick={() => setView('rings')} title="Group traditions into concentric era rings">Era Rings</button>
         <span className="constellation-hint">{hint}</span>
       </div>
 

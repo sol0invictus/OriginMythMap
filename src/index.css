@@ -1,5 +1,5 @@
 /* ─── Fonts ─────────────────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Spectral:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 
 /* ─── Reset & Base ─────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -14,8 +14,11 @@
   --accent:    #b54848;
   --panel-teal:#0d2228;
   --teal:      #7ab0b8;
-  --radius:    5px;
-  font-family: 'EB Garamond', 'Georgia', serif;
+  --radius:    3px;
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-body:    'Spectral', Georgia, serif;
+  --font-ui:      'Spectral', Georgia, serif;
+  font-family: var(--font-body);
   font-size: 16px;
 }
 
@@ -45,7 +48,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 .header-center { flex: 1; max-width: 480px; }
 .header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .app-title {
-  font-family: 'Cinzel', 'Georgia', serif;
+  font-family: var(--font-display);
   font-size: 1.35rem;
   font-weight: 600;
   letter-spacing: 0.1em;
@@ -85,7 +88,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -153,7 +156,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   position: absolute;
   bottom: 88px;
   left: 20px;
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-display);
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.3em;
@@ -272,7 +275,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 .legend-era-name { font-size: 0.85rem; flex: 1; }
 .legend-era-count {
   font-size: 0.65rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   color: var(--text-dim);
   background: var(--surface);
   padding: 1px 6px;
@@ -311,7 +314,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   position: absolute;
   bottom: 10px;
   left: 20px;
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-display);
   font-size: 0.6rem;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -516,15 +519,15 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   padding: 3px 10px;
   border-radius: 6px;
   color: #fff;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
 }
 .myth-region {
   font-size: 0.75rem;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
 }
 .myth-civ-name {
-  font-family: 'Cinzel', 'Georgia', serif;
+  font-family: var(--font-display);
   font-size: 1.85rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -565,14 +568,14 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   min-width: 0;
 }
 .myth-type-label {
-  font-family: 'Cinzel', 'Georgia', serif;
+  font-family: var(--font-display);
   font-size: 0.74rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #e0c878;
 }
 .myth-type-tagline {
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.72rem;
   line-height: 1.35;
   color: var(--text-dim);
@@ -601,7 +604,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   cursor: pointer;
   padding: 10px 14px;
   font-size: 0.82rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   color: var(--text-dim);
   user-select: none;
   background: var(--surface2);
@@ -628,7 +631,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .theme-tag {
   font-size: 0.7rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   letter-spacing: 0.06em;
   padding: 3px 10px;
   border-radius: 6px;
@@ -651,7 +654,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.68rem;
   padding: 2px 8px;
   cursor: pointer;
@@ -670,7 +673,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   border: 1px solid var(--teal);
   border-radius: 8px;
   padding: 4px 10px 4px 12px;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.72rem;
   color: var(--teal);
 }
@@ -717,7 +720,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   border: none;
   outline: none;
   color: var(--text);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.82rem;
   padding: 7px 0;
 }
@@ -772,7 +775,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .search-theme-match {
   font-size: 0.68rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   background: var(--panel-teal);
   color: var(--teal);
   border-radius: 10px;
@@ -780,7 +783,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .search-era-label {
   font-size: 0.68rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   color: var(--text-dim);
   margin-left: auto;
 }
@@ -795,7 +798,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   padding: 12px 14px;
   font-size: 0.82rem;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   z-index: 1000;
 }
 
@@ -809,7 +812,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   margin-bottom: 10px;
 }
 .myth-related-list {
@@ -856,7 +859,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .related-theme {
   font-size: 0.62rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 10px;
@@ -878,7 +881,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .theme-bar::-webkit-scrollbar { display: none; }
 .theme-bar-label {
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.62rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -916,10 +919,10 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   box-shadow: 0 0 10px rgba(181,72,72,0.2);
 }
 .shortcut-icon { font-size: 0.85rem; line-height: 1; }
-.shortcut-label { font-size: 0.72rem; font-family: sans-serif; }
+.shortcut-label { font-size: 0.72rem; font-family: var(--font-ui); }
 .shortcut-count {
   font-size: 0.62rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   background: var(--surface);
   border-radius: 8px;
   padding: 0 5px;
@@ -963,14 +966,14 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   backdrop-filter: blur(4px);
 }
 .connections-num {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-display);
   font-size: 1.4rem;
   color: var(--accent);
   line-height: 1;
 }
 .connections-label {
   font-size: 0.62rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   color: var(--text-dim);
   white-space: nowrap;
   letter-spacing: 0.06em;
@@ -984,7 +987,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.75rem;
   letter-spacing: 0.06em;
   padding: 6px 12px;
@@ -1075,7 +1078,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .migration-popup-meta { margin-bottom: 6px; }
 .migration-era-badge {
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.7rem;
   letter-spacing: 0.06em;
   color: var(--route-color);
@@ -1084,7 +1087,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   padding: 2px 10px;
 }
 .migration-popup-title {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-display);
   font-size: 1.35rem;
   font-weight: 600;
   letter-spacing: 0.05em;
@@ -1109,7 +1112,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   padding: 12px 14px;
 }
 .migration-myth-link-label {
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.62rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -1124,7 +1127,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 
 .migration-related-label {
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.62rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -1155,7 +1158,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .migration-civ-era {
   font-size: 0.65rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   color: var(--text-dim);
 }
 
@@ -1167,7 +1170,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.9rem;
   font-weight: bold;
   cursor: pointer;
@@ -1208,7 +1211,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
 }
 .about-header h2 {
-  font-family: 'Cinzel', 'Georgia', serif;
+  font-family: var(--font-display);
   font-size: 1.6rem;
   font-weight: 600;
   color: var(--accent);
@@ -1224,7 +1227,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   gap: 20px;
 }
 .about-body section h3 {
-  font-family: 'Cinzel', 'Georgia', serif;
+  font-family: var(--font-display);
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.12em;
@@ -1270,11 +1273,11 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   gap: 4px;
 }
 .stat-num {
-  font-family: 'Cinzel', 'Georgia', serif;
+  font-family: var(--font-display);
   font-size: 1.6rem;
   color: var(--accent);
 }
-.about-stat span:last-child { font-size: 0.7rem; font-family: sans-serif; color: var(--text-dim); letter-spacing: 0.06em; }
+.about-stat span:last-child { font-size: 0.7rem; font-family: var(--font-ui); color: var(--text-dim); letter-spacing: 0.06em; }
 
 .about-footer-note {
   border-top: 1px solid var(--border);
@@ -1291,7 +1294,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .analytics-label {
   font-size: 0.68rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-dim);
@@ -1317,7 +1320,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .analytics-count {
   font-size: 0.65rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   color: var(--accent);
   font-weight: bold;
 }
@@ -1338,7 +1341,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   margin-bottom: 8px;
 }
 .myth-sources-list {
@@ -1356,7 +1359,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .source-type {
   font-size: 0.62rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   color: var(--text-dim);
   background: var(--surface2);
   border: 1px solid var(--border);
@@ -1431,7 +1434,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .myth-illustration-note {
   font-size: 0.65rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   opacity: 0.5;
   font-style: italic;
 }
@@ -1488,7 +1491,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.72rem;
   letter-spacing: 0.06em;
   padding: 5px 11px;
@@ -1508,7 +1511,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.75rem;
   letter-spacing: 0.06em;
   padding: 6px 12px;
@@ -1553,7 +1556,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   font-size: 0.85rem;
   color: var(--text-dim);
   font-style: italic;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
 }
 .constellation-svg {
   display: block;
@@ -1577,13 +1580,13 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
 }
 .const-layout-btn {
   background: none;
   border: 1px solid transparent;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.72rem;
   padding: 3px 10px;
   border-radius: 6px;
@@ -1600,7 +1603,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 .constellation-hint {
   font-size: 0.68rem;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-style: italic;
   padding-left: 4px;
   border-left: 1px solid var(--border);
@@ -1627,7 +1630,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 .constellation-tooltip strong { font-size: 1rem; color: var(--text); }
 .constellation-tooltip span  { font-size: 0.78rem; color: var(--text-dim); }
 .constellation-whisper {
-  font-family: 'EB Garamond', serif;
+  font-family: var(--font-body);
   font-style: italic;
   font-size: 0.82rem;
   color: #d4c280;
@@ -1743,7 +1746,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.68rem;
   padding: 2px 8px;
   cursor: pointer;
@@ -1758,7 +1761,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   border: 1px solid var(--border);
   border-radius: 8px;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.85rem;
   padding: 0 10px;
   cursor: pointer;
@@ -1779,7 +1782,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1808,7 +1811,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   to   { transform: translateY(0);    opacity: 1; }
 }
 .pending-text {
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.82rem;
   color: #90b0b8;
 }
@@ -1818,7 +1821,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   border: 1px solid #1a3038;
   border-radius: 6px;
   color: #4a7880;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.72rem;
   padding: 3px 10px;
   cursor: pointer;
@@ -1886,12 +1889,12 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   flex-shrink: 0;
 }
 .compare-civ-a,
 .compare-civ-b {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-display);
   font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -1912,7 +1915,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.72rem;
   padding: 4px 10px;
   cursor: pointer;
@@ -1986,13 +1989,13 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   gap: 12px;
 }
 .compare-civ-name {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-display);
   font-size: 1.05rem;
   font-weight: 600;
   color: var(--text);
 }
 .compare-myth-title {
-  font-family: 'EB Garamond', serif;
+  font-family: var(--font-body);
   font-size: 1rem;
   font-weight: 400;
   font-style: italic;
@@ -2010,7 +2013,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .compare-theme-tag {
   font-size: 0.68rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   letter-spacing: 0.05em;
   padding: 2px 9px;
   border-radius: 8px;
@@ -2035,7 +2038,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.72rem;
   padding: 5px 12px;
   cursor: pointer;
@@ -2072,20 +2075,20 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   position: relative;
 }
 .score-num {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--accent);
   line-height: 1;
 }
 .score-total {
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.65rem;
   color: var(--text-dim);
 }
 .compare-score-label {
   font-size: 0.6rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-dim);
@@ -2100,7 +2103,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .compare-shared-tag {
   font-size: 0.58rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   padding: 2px 7px;
   border-radius: 10px;
   background: rgba(201,152,26,0.12);
@@ -2122,7 +2125,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   margin-bottom: 12px;
 }
 .compare-parallels-list {
@@ -2193,7 +2196,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   border: 1px solid var(--border);
   border-radius: 6px;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.68rem;
   padding: 2px 9px;
   cursor: pointer;
@@ -2211,7 +2214,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   background: var(--surface2);
   border: 1px solid var(--border);
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -2244,7 +2247,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   position: absolute;
   top: 0;
   transform: translateX(-50%);
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-display);
   font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.14em;
@@ -2265,7 +2268,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   position: absolute;
   transform: translateX(-50%);
   font-size: 0.6rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   color: var(--text-dim);
   white-space: nowrap;
   pointer-events: none;
@@ -2413,10 +2416,10 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   padding: 3px 10px;
   border-radius: 6px;
   color: #fff;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
 }
 .era-card-title {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-display);
   font-size: 1.6rem;
   font-weight: 600;
   color: var(--text);
@@ -2424,7 +2427,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 .era-card-subtitle {
   font-size: 0.82rem;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
 }
 .era-card-body {
   padding: 20px 24px 28px;
@@ -2443,7 +2446,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
 }
 .era-card-developments { list-style: none; display: flex; flex-direction: column; gap: 7px; }
 .era-card-dev-item {
@@ -2475,7 +2478,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 }
 .era-card-civ-btn:hover { border-color: var(--era-color); background: var(--surface); }
 .era-civ-name { font-size: 0.85rem; color: var(--text); }
-.era-civ-date { font-size: 0.7rem; color: var(--text-dim); font-family: sans-serif; }
+.era-civ-date { font-size: 0.7rem; color: var(--text-dim); font-family: var(--font-ui); }
 
 @media (max-width: 767px) {
   .era-card-overlay { padding: 0; align-items: flex-end; }
@@ -2507,7 +2510,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   font-size: 0.72rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-ui);
   border-radius: 6px;
   display: inline-flex;
   align-items: center;
@@ -2595,7 +2598,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   margin-bottom: 12px;
 }
 .lineage-group { margin-bottom: 14px; }
@@ -2604,7 +2607,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   display: flex;
   align-items: center;
   gap: 7px;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   font-size: 0.7rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -2663,7 +2666,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--text-dim);
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   margin-bottom: 8px;
 }
 .const-legend-row {
@@ -2682,7 +2685,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 .const-legend-name { font-size: 0.74rem; color: var(--text); flex: 1; }
 .const-legend-count {
   font-size: 0.62rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   color: var(--text-dim);
 }
 .const-legend-foot {
@@ -2690,7 +2693,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   padding-top: 8px;
   border-top: 1px solid var(--border);
   font-size: 0.6rem;
-  font-family: sans-serif;
+  font-family: var(--font-ui);
   color: var(--text-dim);
   font-style: italic;
   line-height: 1.6;
@@ -2737,15 +2740,15 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
    that hardcode dark colours.
    ═══════════════════════════════════════════════════════════════ */
 [data-theme="light"] {
-  --bg:        #e9e1d0;
-  --surface:   #fbf7ee;
-  --surface2:  #f1e9d8;
-  --border:    #d6c8ad;
-  --text:      #2f2920;
-  --text-dim:  #6e6350;
-  --accent:    #a8392f;
-  --panel-teal:#dceaec;
-  --teal:      #2d6f7a;
+  --bg:        #e7ddc8;
+  --surface:   #f7f0e1;
+  --surface2:  #efe6d2;
+  --border:    #cdbf9f;
+  --text:      #2b251c;
+  --text-dim:  #6a5f4b;
+  --accent:    #8c2f23;   /* oxblood — the single chrome accent */
+  --panel-teal:#ece1cd;   /* warm tint (retired teal → sepia) */
+  --teal:      #6f6045;   /* muted sepia ink, no longer a second accent */
 }
 
 /* Map + base chrome */
@@ -2849,14 +2852,14 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   z-index: 4;
 }
 .lh-titles { display: flex; flex-direction: column; gap: 1px; }
-.lh-title { font-family: 'Cinzel', serif; font-size: 0.98rem; letter-spacing: 0.05em; color: #d4c280; }
-.lh-sub { font-family: sans-serif; font-size: 0.7rem; color: #5e7880; }
+.lh-title { font-family: var(--font-display); font-size: 0.98rem; letter-spacing: 0.05em; color: #d4c280; }
+.lh-sub { font-family: var(--font-ui); font-size: 0.7rem; color: #5e7880; }
 .lh-eralegend { display: flex; align-items: center; gap: 13px; flex-wrap: wrap; margin: 0 auto; }
-.lh-era { display: inline-flex; align-items: center; gap: 5px; font-family: sans-serif; font-size: 0.7rem; color: #aab2bd; white-space: nowrap; }
+.lh-era { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-ui); font-size: 0.7rem; color: #aab2bd; white-space: nowrap; }
 .lh-era i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; box-shadow: 0 0 5px rgba(255,255,255,0.2); }
 .lh-key { text-align: right; }
-.lh-key-main { font-family: sans-serif; font-size: 0.72rem; color: #c9a24b; }
-.lh-key-dim { font-family: sans-serif; font-size: 0.66rem; color: #5e7880; }
+.lh-key-main { font-family: var(--font-ui); font-size: 0.72rem; color: #c9a24b; }
+.lh-key-dim { font-family: var(--font-ui); font-size: 0.66rem; color: #5e7880; }
 .lineage-scroll {
   position: relative;
   flex: 1;
@@ -2891,8 +2894,8 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   box-shadow: 0 8px 30px rgba(0,0,0,0.5);
 }
 .lineage-tooltip strong { font-size: 0.98rem; color: #f0ead8; }
-.lineage-tt-meta { font-size: 0.74rem; color: #7e93a0; font-family: sans-serif; }
-.lineage-tt-line { font-size: 0.8rem; color: #c3c8d0; font-family: sans-serif; line-height: 1.45; }
+.lineage-tt-meta { font-size: 0.74rem; color: #7e93a0; font-family: var(--font-ui); }
+.lineage-tt-line { font-size: 0.8rem; color: #c3c8d0; font-family: var(--font-ui); line-height: 1.45; }
 .lineage-tt-key {
   display: inline-block;
   font-size: 0.58rem;
@@ -2931,12 +2934,12 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 .lep-close:hover { color: #f0ead8; }
 .lep-route {
   display: flex; flex-wrap: wrap; align-items: center; gap: 7px;
-  font-family: 'Cinzel', serif; font-size: 0.92rem; padding-right: 18px;
+  font-family: var(--font-display); font-size: 0.92rem; padding-right: 18px;
 }
 .lep-arrow { color: #c9a24b; }
 .lep-label {
   margin-top: 7px;
-  font-family: sans-serif; font-size: 0.66rem; letter-spacing: 0.06em;
+  font-family: var(--font-ui); font-size: 0.66rem; letter-spacing: 0.06em;
   text-transform: uppercase; color: #c9a24b;
 }
 .lep-desc { margin-top: 11px; font-size: 0.86rem; line-height: 1.62; color: #d6dae2; }
@@ -2945,7 +2948,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   background: rgba(201,162,75,0.12);
   border: 1px solid #3a4a44;
   color: #e8dfb0;
-  font-family: sans-serif; font-size: 0.74rem;
+  font-family: var(--font-ui); font-size: 0.74rem;
   padding: 6px 11px; border-radius: 7px; cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
 }
@@ -3006,4 +3009,102 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 /* Coarse-pointer (touch) devices: enlarge the constellation hit targets a touch */
 @media (hover: none) and (pointer: coarse) {
   .const-layout-btn { padding-top: 6px; padding-bottom: 6px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Aged-press refresh — type, flat letterpress buttons, one accent
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Wordmark: title-case display serif, not shouty tracked caps */
+.app-title { text-transform: none; letter-spacing: 0.005em; font-weight: 600; }
+.app-subtitle { font-style: italic; }
+
+/* Small-caps section labels instead of all-caps + heavy tracking */
+.legend-title, .myth-related-title, .myth-lineage-title, .myth-sources-title,
+.compare-label, .const-legend-title, .theme-bar-label, .myth-type-label,
+.about-body section h3, .era-card-section-title, .compare-parallels-title,
+.migration-related-label, .migration-myth-link-label {
+  text-transform: none;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+}
+
+/* Toolbar + toggle buttons — flat, hairline, small-caps, no icons/glow */
+.header-right > button,
+.show-all-btn,
+.migration-toggle-btn,
+.influence-toggle-btn,
+.constellation-toggle-btn,
+.compare-surprise-header-btn,
+.random-myth-btn {
+  font-family: var(--font-ui);
+  font-weight: 500;
+  text-transform: none;
+  font-variant: small-caps;
+  letter-spacing: 0.05em;
+  font-size: 0.86rem;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  box-shadow: none !important;
+}
+.header-right > button:hover,
+.show-all-btn:hover,
+.migration-toggle-btn:hover,
+.influence-toggle-btn:hover,
+.constellation-toggle-btn:hover,
+.compare-surprise-header-btn:hover,
+.random-myth-btn:hover {
+  background: var(--surface2);
+  border-color: var(--text-dim);
+  color: var(--text);
+}
+/* Selected = a solid oxblood block with paper text */
+.show-all-btn.active,
+.migration-toggle-btn.active,
+.influence-toggle-btn.active,
+.constellation-toggle-btn.active,
+.compare-surprise-header-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #f6efe0;
+}
+.show-all-btn.active .show-all-indicator { background: #f6efe0; }
+
+/* Keep round affordances round */
+.header-right > button.about-btn { border-radius: 50%; font-variant: normal; }
+.header-right > button.theme-toggle-btn { font-variant: normal; }
+
+/* Active-filter chip → ink + accent, not teal */
+.active-filter { border-radius: 2px; background: var(--surface2); border-color: var(--border); color: var(--text); }
+.active-filter strong { color: var(--accent); }
+.active-filter button { color: var(--text-dim); }
+.active-filter button:hover { color: var(--accent); }
+
+/* Theme bar: drop the icons, small-caps, flat */
+.shortcut-icon { display: none; }
+.theme-shortcut {
+  font-family: var(--font-ui);
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+  border-radius: 2px;
+  box-shadow: none !important;
+}
+.shortcut-label { font-size: 0.82rem; }
+.theme-shortcut.active { background: var(--accent); border-color: var(--accent); color: #f6efe0; }
+.theme-shortcut.active .shortcut-count { background: rgba(246,239,224,0.25); color: #f6efe0; }
+
+/* Theme tags + small pills → squared, small-caps */
+.theme-tag { border-radius: 2px; font-variant: small-caps; letter-spacing: 0.03em; text-transform: none; }
+.myth-share-btn, .myth-compare-btn, .compare-action-btn, .compare-view-full-btn,
+.lineage-btn, .lep-actions button, .pending-cancel, .era-card-civ-btn,
+.migration-civ-btn, .myth-related-btn, .search-input-wrap { border-radius: 2px; }
+
+/* Constellation layout buttons (dark view): same flat small-caps system */
+.const-layout-btn {
+  font-family: var(--font-ui);
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+  border-radius: 2px;
 }
