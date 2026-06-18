@@ -13,6 +13,7 @@ export const HTML_GLYPHS = {
   babylon: '⬟', yamnaya: '🐎',
   dogon: '🥚', fon: '🌈', zulu: '🌾', muisca: '✨', mapuche: '⛰',
   hebrew: '✡', finnish: '❆', mongolian: '🏹', igbo: '♁', hopi: '◭', kuba: '◓',
+  etruscan: '☉', vietnamese: '柱', cherokee: '🪲', akan: '❂', ainu: '🐻', tagalog: '🎋',
 }
 
 // SVG_GLYPHS: Unicode symbols only (no emoji), for ConstellationView SVG <text> nodes
@@ -30,6 +31,7 @@ export const SVG_GLYPHS = {
   babylon: '⬟', yamnaya: '⊵',
   dogon: '⊚', fon: '☽', zulu: '≈', muisca: '✧', mapuche: '▲',
   hebrew: '✡', finnish: '❋', mongolian: '⊰', igbo: '♁', hopi: '◭', kuba: '◓',
+  etruscan: '⊙', vietnamese: '柱', cherokee: '◐', akan: '❂', ainu: '◑', tagalog: '⋎',
 }
 
 export const getHtmlGlyph = id => HTML_GLYPHS[id] || '◈'

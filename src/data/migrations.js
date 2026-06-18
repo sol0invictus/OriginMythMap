@@ -30,7 +30,7 @@ export const migrations = [
     color: '#9b6ad4',
     description: `Humans crossed into the Americas from Siberia via Beringia — the land bridge now submerged beneath the Bering Strait — during the Last Glacial Maximum when sea levels were 120m lower than today. Two main theories exist: a coastal kelp-highway route by boat along the Pacific coast, and an inland ice-free corridor route through present-day Alberta. Both routes led to rapid dispersal throughout the Americas within a few thousand years, reaching Patagonia by ~12,500 BCE. This single migration event is the source of all pre-Columbian mythological traditions in the Americas, from the Haudenosaunee Sky Woman to the Aztec Five Suns to the Inca Viracocha.`,
     mythLink: 'Every civilization in the Americas on this map — Haudenosaunee, Aztec, Maya, Inca — descends from this founding migration, which is why earth-diver, flood, and sky-world themes recur across cultures with no later contact.',
-    relatedCivIds: ['haudenosaunee', 'aztec', 'maya', 'inca'],
+    relatedCivIds: ['haudenosaunee', 'aztec', 'maya', 'inca', 'cherokee'],
     waypoints: [
       [60, 140],   // Siberia (origin)
       [64, 170],   // Eastern Siberia
@@ -97,7 +97,7 @@ export const migrations = [
     color: '#4a8ab5',
     description: `The most extraordinary maritime migration in human history. Beginning from Taiwan around 3000 BCE, Austronesian-speaking peoples island-hopped through the Philippines, Indonesia, and Melanesia into the open Pacific in outrigger canoes — navigating by stars, swells, and bird flight with no instruments. They reached Hawaii (~800 CE), Easter Island (~1200 CE), and New Zealand (~1280 CE). This explains why Polynesian, Maori, and Hawaiian cosmologies are so structurally similar — they share a single ancestral tradition. The Kumulipo, Maori Rangi-and-Papa, and Polynesian creation chants are regional variations of the same source.`,
     mythLink: 'Polynesian (Kumulipo), Maori (Rangi and Papa), and Hawaiian cosmologies are not parallel inventions — they are the same tradition carried by this single extraordinary migration across 10,000 miles of open ocean.',
-    relatedCivIds: ['maori', 'polynesian'],
+    relatedCivIds: ['maori', 'polynesian', 'javanese', 'tagalog'],
     waypoints: [
       [23, 121],   // Taiwan (origin)
       [13, 122],   // Philippines

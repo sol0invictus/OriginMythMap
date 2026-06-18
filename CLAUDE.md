@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Primary axis: **time (era)**. Regions are filtered/highlighted by era using a timeline slider.
 
-**Current status:** 44 civilizations across 4 eras (Prehistoric → Medieval). Full myth content, theme filtering, search, share links, animated transitions, about modal, typography polish, SVG theme-arc overlays, hover resonance, theme shortcut bar, 8 animated migration routes, era-aware influence arrows, starfield background, sepia mode, force-directed constellation graph, comparative myth viewer, century-resolution timeline, offline service worker, localStorage analytics, first-visit hint, era watermark, and random myth button. See [IMPLEMENTATION.md](./IMPLEMENTATION.md) for the full roadmap.
+**Current status:** 51 civilizations across 5 eras (Prehistoric → Medieval). Full myth content, theme filtering, search, share links, animated transitions, about modal, typography polish, SVG theme-arc overlays, hover resonance, theme shortcut bar, 8 animated migration routes, era-aware influence arrows, starfield background, sepia mode, force-directed constellation graph, comparative myth viewer, century-resolution timeline, offline service worker, localStorage analytics, first-visit hint, era watermark, and random myth button. See [IMPLEMENTATION.md](./IMPLEMENTATION.md) for the full roadmap.
 
 ## Tech Stack
 
@@ -194,17 +194,17 @@ The whole view is always rendered on the dark palette regardless of theme (`.con
 
 Every civilization on the map must have a genuine **cosmogony** — a "how the world came to be" narrative. Cultures whose famous myth is the origin of a *dynasty, people, deity, crop, or the dead* (rather than the world), and cultures known only from archaeology with no recorded creation narrative, were deliberately removed. When a culture had a real but lesser-known world-creation myth, the entry uses that (e.g. Korea → the Changse-ga; Inuit → the Raven creation; Canaan/Phoenicia → Sanchuniathon's cosmic-egg cosmogony, not the Baal Cycle).
 
-## Civilizations (45 total)
+## Civilizations (51 total)
 
 **Prehistoric (4):** Aboriginal Australia, San People, Siberian Shamanic (Evenki), Yupik / Inuit (Arctic)
 
 **Bronze Age (6):** Sumer, Ancient Egypt, Nubia / Kush, Old Babylon, Yamnaya (Pontic Steppe), Akkadian Empire
 
-**Iron Age (5):** Vedic India, Ancient Persia (Zoroastrian), Canaan / Phoenicia, Korea (Changse-ga), Ancient Israel (Genesis)
+**Iron Age (6):** Vedic India, Ancient Persia (Zoroastrian), Canaan / Phoenicia, Korea (Changse-ga), Ancient Israel (Genesis), Etruscan Civilization
 
-**Classical (5):** Ancient Greece, Maya, Roman Empire, Yoruba, Han Dynasty China
+**Classical (6):** Ancient Greece, Maya, Roman Empire, Yoruba, Han Dynasty China, Vietnam (Việt)
 
-**Medieval (25):** Norse Scandinavia, Hindu Puranic, Japan Shinto, Slavic, Maori, Aztec, Inca, Haudenosaunee, Polynesia/Hawaii, Tibetan Bön/Buddhist, Mali Empire/Mande, Lakota, Guaraní, Navajo/Diné, Javanese, Dogon, Fon/Dahomey, Zulu/Nguni Bantu, Muisca, Mapuche, Finnish (Kalevala), Mongolia (Tengrist), Igbo, Hopi (Pueblo), Kuba/Bushongo
+**Medieval (29):** Norse Scandinavia, Hindu Puranic, Japan Shinto, Slavic, Maori, Aztec, Inca, Haudenosaunee, Polynesia/Hawaii, Tibetan Bön/Buddhist, Mali Empire/Mande, Lakota, Guaraní, Navajo/Diné, Javanese, Dogon, Fon/Dahomey, Zulu/Nguni Bantu, Muisca, Mapuche, Finnish (Kalevala), Mongolia (Tengrist), Igbo, Hopi (Pueblo), Kuba/Bushongo, Cherokee, Akan / Ashanti, Ainu, Tagalog (Philippines)
 
 ## Myth categories (uniform typology)
 

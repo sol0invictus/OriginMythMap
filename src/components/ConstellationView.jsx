@@ -564,7 +564,7 @@ function computeLineageLayout(W) {
   })
   const indepRows = Math.ceil(INDEPENDENT.length / gridCols)
   const indep = { y0: indepY0, y1: indepY0 + 48 + indepRows * cellH }
-  return { pos, lanes, colX, maxDepth, indep, totalH: indep.y1 + 24 }
+  return { pos, lanes, colX, colW, maxDepth, indep, totalH: indep.y1 + 24 }
 }
 
 // Sankey-style edge: leaves the right side of the source, enters the left
@@ -582,6 +582,7 @@ function LineageNetwork({ onCivSelect }) {
   const [dims, setDims] = useState(null)
   const [hovered, setHovered] = useState(null)
   const [hoveredEdge, setHoveredEdge] = useState(null)
+  const [selectedInf, setSelectedInf] = useState(null)
 
   useEffect(() => {
     if (!scrollRef.current) return
@@ -625,12 +626,16 @@ function LineageNetwork({ onCivSelect }) {
       </div>
       <div className="lineage-scroll" ref={scrollRef}>
         {layout && (() => {
-          const { pos, lanes, colX, maxDepth, indep, totalH } = layout
+          const { pos, lanes, colX, colW, maxDepth, indep, totalH } = layout
           const bodyH = Math.max(totalH, dims.h)
+          // On narrow screens the columns hit their minimum width and the
+          // diagram grows wider than the viewport — let it scroll horizontally
+          // rather than clip. On desktop this equals W (no scroll).
+          const contentW = Math.max(W, LN_PAD_L + (maxDepth + 1) * colW + LN_PAD_R)
           const isDim = id => hovered && !related.has(id)
           const lanesBottom = lanes.at(-1)?.y1 || 0
           return (
-            <svg width={W} height={bodyH} className="lineage-svg">
+            <svg width={contentW} height={bodyH} className="lineage-svg" onClick={() => setSelectedInf(null)}>
               <defs>
                 <marker id="li-arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
                   <path d="M0,0 L0,6 L8,3 z" fill="#c9a24b" />
@@ -646,7 +651,7 @@ function LineageNetwork({ onCivSelect }) {
               ))}
               {lanes.map((lane, i) => (
                 <g key={i}>
-                  {i > 0 && <line x1={16} y1={lane.y0} x2={W - LN_PAD_R} y2={lane.y0} stroke="#243038" strokeOpacity="0.55" strokeWidth="1" strokeDasharray="2 6" />}
+                  {i > 0 && <line x1={16} y1={lane.y0} x2={contentW - LN_PAD_R} y2={lane.y0} stroke="#243038" strokeOpacity="0.55" strokeWidth="1" strokeDasharray="2 6" />}
                   <text x={16} y={lane.cy - 4} fontFamily="'Cinzel', serif" fontSize="11" fill="#d4c280" fillOpacity="0.92">{lane.name}</text>
                   <text x={16} y={lane.cy + 12} fontFamily="sans-serif" fontSize="8.5" fill="#5e7880">{lane.members.length} traditions</text>
                 </g>
@@ -655,20 +660,22 @@ function LineageNetwork({ onCivSelect }) {
                 const s = pos[inf.from], t = pos[inf.to]
                 if (!s || !t) return null
                 const onPath = hovered && (inf.from === hovered || inf.to === hovered)
-                const dim = hovered && !onPath
-                const hot = onPath || hoveredEdge === i
+                const isSelected = selectedInf?.id === inf.id
+                const dim = (hovered && !onPath) || (selectedInf && !isSelected)
+                const hot = onPath || hoveredEdge === i || isSelected
                 const d = lineageArrow(s, t)
                 return (
                   <g key={inf.id}>
-                    <path d={d} fill="none" stroke={hot ? '#ffd97a' : '#c9a24b'} strokeWidth={hot ? 2.2 : 1.3}
+                    <path d={d} fill="none" stroke={hot ? '#ffd97a' : '#c9a24b'} strokeWidth={hot ? 2.4 : 1.3}
                       strokeOpacity={dim ? 0.07 : hot ? 0.95 : 0.4} markerEnd={`url(#${hot ? 'li-arrow-hot' : 'li-arrow'})`}
                       style={{ transition: 'stroke-opacity 0.15s, stroke 0.15s' }} />
-                    <path d={d} fill="none" stroke="transparent" strokeWidth="12" style={{ cursor: 'help' }}
-                      onMouseEnter={() => setHoveredEdge(i)} onMouseLeave={() => setHoveredEdge(null)} />
+                    <path d={d} fill="none" stroke="transparent" strokeWidth="13" style={{ cursor: 'pointer' }}
+                      onMouseEnter={() => setHoveredEdge(i)} onMouseLeave={() => setHoveredEdge(null)}
+                      onClick={(e) => { e.stopPropagation(); setHoveredEdge(null); setSelectedInf(inf) }} />
                   </g>
                 )
               })}
-              <line x1={16} y1={indep.y0} x2={W - LN_PAD_R} y2={indep.y0} stroke="#243038" strokeOpacity="0.55" strokeWidth="1" strokeDasharray="2 6" />
+              <line x1={16} y1={indep.y0} x2={contentW - LN_PAD_R} y2={indep.y0} stroke="#243038" strokeOpacity="0.55" strokeWidth="1" strokeDasharray="2 6" />
               <text x={16} y={indep.y0 + 26} fontFamily="'Cinzel', serif" fontSize="11" fill="#d4c280" fillOpacity="0.92">Independent traditions</text>
               <text x={16} y={indep.y0 + 42} fontFamily="sans-serif" fontSize="8.5" fill="#5e7880">no documented transmission</text>
               {civilizations.map(c => {
@@ -715,12 +722,34 @@ function LineageNetwork({ onCivSelect }) {
           <span className="lineage-tt-hint">click to read the myth</span>
         </div>
       )}
-      {hoveredEdge != null && !hovered && (() => {
+      {hoveredEdge != null && !hovered && !selectedInf && (() => {
         const inf = influences[hoveredEdge]
         return (
           <div className="lineage-tooltip lineage-edge-tip">
             <strong>{civById(inf.from)?.name} → {civById(inf.to)?.name}</strong>
             <span className="lineage-tt-meta">{inf.label}</span>
+            <span className="lineage-tt-hint">click the arrow for the full story</span>
+          </div>
+        )
+      })()}
+
+      {/* Clicked-arrow detail panel — how the two traditions are related */}
+      {selectedInf && (() => {
+        const a = civById(selectedInf.from), b = civById(selectedInf.to)
+        return (
+          <div className="lineage-edge-panel" onClick={e => e.stopPropagation()}>
+            <button className="lep-close" onClick={() => setSelectedInf(null)} aria-label="Close">✕</button>
+            <div className="lep-route">
+              <span style={{ color: eraColor(a.era) }}>{a.name}</span>
+              <span className="lep-arrow">→</span>
+              <span style={{ color: eraColor(b.era) }}>{b.name}</span>
+            </div>
+            <div className="lep-label">{selectedInf.label}</div>
+            <p className="lep-desc">{selectedInf.description}</p>
+            <div className="lep-actions">
+              <button onClick={() => onCivSelect(a)}>Read {a.name}</button>
+              <button onClick={() => onCivSelect(b)}>Read {b.name}</button>
+            </div>
           </div>
         )
       })()}

@@ -239,8 +239,8 @@ export default function MapView({
                 const otherThemes = myths[otherCiv?.mythId]?.themes || []
                 if (!myThemes.some(t => otherThemes.includes(t))) return
                 resonatingRef.current.add(otherId)
-                meta.setStyle({ fillOpacity: meta.baseOpacity + 0.22, weight: 3 })
-                meta.getEl()?.classList.add('resonating')
+                // Steady highlight of theme-related regions (no blinking pulse)
+                meta.setStyle({ fillOpacity: meta.baseOpacity + 0.28, weight: 3 })
               })
             },
             mouseout: () => {
@@ -251,7 +251,6 @@ export default function MapView({
                 const m = layerMetaRef.current[id]
                 if (!m) return
                 m.setStyle({ fillOpacity: m.baseOpacity, weight: 2 })
-                m.getEl()?.classList.remove('resonating')
               })
               resonatingRef.current.clear()
             },

@@ -218,4 +218,28 @@ export const influences = [
     label: 'West African cosmological neighbors',
     description: 'The Yoruba and Igbo, neighboring peoples of southern Nigeria, share a West African pattern: a remote supreme creator (Olodumare / Chukwu) who fashions the world and humanity from a watery beginning and then withdraws, leaving the world to lesser deities and the ancestors.',
   },
+
+  // ── Mediterranean expansion ─────────────────────────────────────
+  {
+    id: 'greece-etruscan',
+    from: 'greece', to: 'etruscan',
+    theme: 'sky-earth',
+    label: 'Greek myth adopted in Etruria',
+    description: 'From the 8th century BCE, Greek colonies in southern Italy and Sicily flooded Etruria with Greek myth and imagery. The Etruscans adopted the Greek gods and their stories — Zeus became Tinia, Hera became Uni, Herakles became Hercle — painting Greek theogony and heroic myth onto their tomb walls, mirrors, and pottery.',
+  },
+  {
+    id: 'etruscan-rome',
+    from: 'etruscan', to: 'rome',
+    theme: 'cycles',
+    label: 'Etruscan religion shapes Rome',
+    description: 'Rome inherited much of its sacred technology from the Etruscans: divination by lightning and entrails (the Etrusca disciplina), the doctrine of fixed cosmic ages (saecula), the Capitoline triad, and the rites for founding a city. Roman magistrates consulted Etruscan haruspices for centuries.',
+  },
+  // ── East Asian sphere ───────────────────────────────────────────
+  {
+    id: 'hanchina-vietnamese',
+    from: 'han-china', to: 'vietnamese',
+    theme: 'sky-earth',
+    label: 'Sinitic cosmology in Vietnam',
+    description: 'A thousand years of Chinese rule and contact layered Sinitic cosmology over Vietnamese tradition. The Vietnamese creation, in which the giant Thần Trụ Trời pillars the sky apart from the earth, mirrors the Chinese Pangu who separates heaven and earth, and Vietnam absorbed the yin-yang and three-realms framework.',
+  },
 ]

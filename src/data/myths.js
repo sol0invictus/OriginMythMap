@@ -525,7 +525,7 @@ Creation begins in the deepest darkness (Po), from slime and primordial heat. Th
 - Fourth era (Po changes to Ao — night gives way to day): The first humans — born from the pairing of a god with a mortal woman
 
 Each form is paired, male and female, one generating from the other. The chant functions simultaneously as cosmology, genealogy, and mnemonic map of the natural world. The ali'i (chiefly class) trace their descent through 800 generations back to these primal pairings — establishing that their divine right to rule is inseparable from the creation of the world itself.`,
-    category: 'chaos-combat',
+    category: 'ex-nihilo',
     themes: ['void', 'water', 'ancestors', 'cycles', 'word-creation'],
     relatedTexts: [
       { title: 'The Kumulipo: A Hawaiian Creation Chant', author: 'Queen Lili\'uokalani (trans., 1897)', type: 'Primary translation (public domain)', url: 'https://en.wikipedia.org/wiki/Kumulipo' },
@@ -1158,6 +1158,144 @@ When all was made, Bumba walked through the new world and gave it to the people,
       { title: 'On the Trail of the Bushongo', author: 'Emil Torday', type: 'Ethnographic study (1925)', url: 'https://en.wikipedia.org/wiki/Mbombo' },
       { title: 'African Mythology', author: 'Geoffrey Parrinder', type: 'Reference survey (1967)', url: '' },
       { title: 'Mbombo / Bumba (overview)', author: '', type: 'Reference', url: 'https://en.wikipedia.org/wiki/Mbombo' },
+    ],
+    imageUrl: '',
+  },
+
+  // ── Added: expansion (further world-origin myths) ─────────────────────
+  etruscan: {
+    id: 'etruscan',
+    title: 'The Twelve Millennia of Creation',
+    civilization: 'Etruscan Civilization',
+    dateRange: '900–100 BCE',
+    category: 'ex-nihilo',
+    summary: `A fragment of Etruscan cosmic doctrine, preserved by a later Greek source, holds that the creator god allotted twelve thousand years to the whole of creation and the life of the world. In the first six ages he made, in turn, the heavens and earth, the visible firmament, the sea and waters, the sun and moon and stars, the creatures of air and water and land, and finally humankind.`,
+    fullText: `The Etruscans, who ruled central Italy before Rome eclipsed them, left no surviving literature of their own — their language is only partly understood and their sacred books are lost. What we know of their cosmogony survives in fragments quoted by Greek and Roman writers, most famously a passage preserved in the Byzantine lexicon known as the Suda, drawn from a much older source describing "Tyrrhenian" (Etruscan) teaching.
+
+According to this doctrine, the demiurge — the divine creator — allotted twelve thousand years to all his works, and distributed them across twelve "houses" or millennia. In the first millennium he made the heaven and the earth. In the second he made the firmament, the visible vault of the sky. In the third, the sea and all the waters. In the fourth, the great lights: the sun, the moon, and the stars. In the fifth, every winged, creeping, and four-footed creature of the air, the water, and the land. And in the sixth millennium, he made human beings.
+
+The remaining six millennia were given to the existence of humankind, so that the whole span of the world — creation and history together — was a fixed, finite cosmic lifespan. This belief in bounded ages ran deep in Etruscan thought: their priests reckoned time in saecula, long "generations" or epochs, and held that their own civilization, too, had been granted a fixed number of saecula before it would pass away — a prophecy the Romans recorded as having come true.
+
+The Etruscans were famous in antiquity as masters of divination — reading the will of the gods in lightning, in the flight of birds, and in the livers of sacrificed animals. This body of revealed knowledge, the Etrusca disciplina, was said to have been taught by a child-prophet named Tages, who sprang from a ploughed furrow, and by the nymph Vegoia. Through it the Etruscans believed the structure and the timetable of the created cosmos had been disclosed to them — and through their pupils, the Romans, that vision of ordered cosmic ages passed into the Western world.`,
+    themes: ['sky-earth', 'sun', 'cycles', 'animals'],
+    relatedTexts: [
+      { title: 'Suda (Byzantine lexicon, 10th c.) — entry preserving the Etruscan creation in twelve millennia', author: '', type: 'Primary source (citing older material)', url: 'https://en.wikipedia.org/wiki/Etruscan_religion' },
+      { title: 'Etruscan Myth, Sacred History, and Legend', author: 'Nancy Thomson de Grummond', type: 'Scholarly study (Univ. of Pennsylvania, 2006)', url: '' },
+      { title: 'Etruscan religion (overview)', author: '', type: 'Reference', url: 'https://en.wikipedia.org/wiki/Etruscan_religion' },
+    ],
+    imageUrl: '',
+  },
+
+  vietnamese: {
+    id: 'vietnamese',
+    title: 'Thần Trụ Trời — The God Who Propped Up the Sky',
+    civilization: 'Vietnam (Việt)',
+    dateRange: '700 BCE–900 CE',
+    category: 'world-parent',
+    summary: `In the Vietnamese creation, the cosmos was a dark, chaotic murk until a colossal god stood up and dug and piled earth and stone into a great pillar that pushed the sky high above the earth, parting the two. When the heavens had set firm, he broke the pillar apart — its scattered rock becoming the mountains and islands, and the pit it left becoming the sea.`,
+    fullText: `The oldest layer of Vietnamese myth opens with Thần Trụ Trời, "the God who props up the sky." In the beginning, in the tradition recorded from northern Vietnamese oral lore, heaven and earth were one confused, lightless mass — a chaos without form, without separation, in which nothing could live.
+
+Then a giant god of immense size came into being and stood up within the murk. With his hands he dug the earth and heaped up rock and clay, building a single vast pillar that rose higher and higher, pushing the sky upward as it grew. As the pillar climbed, the heavens were lifted away from the earth, and for the first time there was an open space between them — dry above, solid below — where light and air and life could enter.
+
+When the sky had set firm and high, the god no longer needed the pillar. He broke it apart and flung its earth and stone across the world. The scattered rocks and clods became the mountains, the hills, and the islands; the great hollow he had dug to build the pillar filled with water and became the sea. So the uneven face of the world — its peaks and its oceans — is the rubble of the column that once held up the sky.
+
+This parting of heaven and earth by a primordial giant closely echoes the Chinese myth of Pangu, a reflection of the thousand years of Chinese rule and cultural contact that layered Sinitic cosmology over native Vietnamese tradition. Vietnamese myth also tells a separate and more famous origin story for the people themselves — the union of the dragon lord Lạc Long Quân and the mountain fairy Âu Cơ, whose hundred children became the ancestors of the Vietnamese — but it is Thần Trụ Trời who first separates the sky from the earth and makes a world for them to live in.`,
+    themes: ['sky-earth', 'chaos', 'land', 'water'],
+    relatedTexts: [
+      { title: 'Lược khảo về thần thoại Việt Nam (A Study of Vietnamese Mythology)', author: 'Nguyễn Đổng Chi', type: 'Scholarly study (1956)', url: '' },
+      { title: 'Vietnamese mythology (overview)', author: '', type: 'Reference', url: 'https://en.wikipedia.org/wiki/Vietnamese_mythology' },
+      { title: 'Thần Trụ Trời (overview)', author: '', type: 'Reference', url: 'https://vi.wikipedia.org/wiki/Th%E1%BA%A7n_Tr%E1%BB%A5_Tr%E1%BB%9Di' },
+    ],
+    imageUrl: '',
+  },
+
+  cherokee: {
+    id: 'cherokee',
+    title: 'The Water Beetle and the Great Buzzard',
+    civilization: 'Cherokee',
+    dateRange: '1000–1800 CE',
+    category: 'earth-diver',
+    summary: `The Cherokee say the earth is a great island of soft soil floating on a sea, hung from the rock vault of the sky by four cords at the cardinal points. When all was still water, the little Water Beetle dived to the bottom and brought up mud that spread into land — and the beating wings of the Great Buzzard carved the Cherokee mountains and valleys.`,
+    fullText: `In the Cherokee cosmogony — recorded in detail by the ethnographer James Mooney among the Eastern Cherokee in the 1880s and '90s — the earth is a great island of soft, flat soil resting on the surface of a wide ocean, suspended at each of the four cardinal points by a cord that hangs down from a vault of solid rock, the sky.
+
+In the beginning all living things were above, crowded together in Gälûñ'lätï, the arch of the sky, for there was as yet no earth, only water below. The animals wanted more room. Dâyuni'sï, "Beaver's Grandchild," the little Water Beetle, offered to look for land. It darted across the surface of the water but found no place to rest, so it dived to the bottom and came up with a little soft mud. The mud began to grow and spread on every side until it became the island we call the earth. Afterward it was fastened to the sky with the four cords, though no one remembers who did this.
+
+The earth was still wet and soft and flat. The animals were eager to come down, and kept sending birds to see if it had dried, but the birds found no place to alight and flew back. At last the Great Buzzard, ancestor of all buzzards, was sent to make ready the land. He flew low over the soft earth, and when he reached the Cherokee country in the middle his great wings were tired and began to strike the ground: wherever they struck downward a valley was made, and wherever they turned upward a mountain rose. That is why the old Cherokee land is so full of mountains. Fearing the whole world would be mountainous, the animals called him back.
+
+When the earth was dry, the animals and plants came down. The conjurers set the sun in a track to move each day from east to west over the island, giving light and heat. At the first creation the living things were told to keep watch and stay awake for seven nights; but only a few — among the animals the owl and the panther, among the trees the cedar, the pine, the spruce, the holly, and the laurel — managed it, and these were granted the power to keep their eyes or their leaves through the dark and the winter ever after.`,
+    themes: ['earth-diver', 'water', 'animals', 'sun', 'land'],
+    relatedTexts: [
+      { title: 'Myths of the Cherokee', author: 'James Mooney', type: 'Primary ethnographic collection (Bureau of American Ethnology, 1900)', url: 'https://en.wikipedia.org/wiki/Myths_of_the_Cherokee' },
+      { title: 'Cherokee mythology (overview)', author: '', type: 'Reference', url: 'https://en.wikipedia.org/wiki/Cherokee_mythology' },
+    ],
+    imageUrl: '',
+  },
+
+  akan: {
+    id: 'akan',
+    title: 'Odomankoma, Nyame, and the Retreat of the Sky',
+    civilization: 'Akan / Ashanti',
+    dateRange: '1000–1800 CE',
+    category: 'ex-nihilo',
+    summary: `The Akan hold that Odomankoma, the infinite creator, fashioned the ordered world — the sky and earth, day and night, and even death itself. The high god Nyame once dwelt close above the earth; but an old woman pounding food kept striking the low sky with her pestle, until the offended Nyame drew the heavens far up out of human reach.`,
+    fullText: `Among the Akan-speaking peoples of Ghana and Côte d'Ivoire — the Ashanti, Fante, Akuapem, and their kin — the supreme being is Nyame (also called Onyankopɔn), the sky god, whose greatness is captured in the famous Adinkra emblem Gye Nyame, "except for God" — meaning that nothing was there at the beginning and nothing will remain at the end save God alone.
+
+Alongside Nyame stands Odomankoma, the creator, the one "who is infinite, who never dies." In Akan thought it is Odomankoma who actually fashioned the world and gave it order: the sky above and the earth (the goddess Asase Yaa) below, the day and the night, the seasons, the rivers and forests, and the institutions of human life. Akan elders say that Odomankoma "created the thing" — the whole ordered cosmos — and that he created even Death (Owuo), for creation and ending were established together. The three — Nyame the sky, Asase Yaa the earth, and Odomankoma the creator — frame the Akan picture of the world.
+
+The best-loved Akan tale of beginnings explains why the sky god now dwells so far away. In the first days Nyame lived just overhead, low enough to touch. But an old woman, pounding her fufu (boiled yam or cassava) in a tall wooden mortar, kept knocking the sky with the end of her long pestle each time she raised it. Again and again she struck Nyame, until at last, annoyed, the god rose higher and higher, withdrawing the heavens far up beyond reach. In some tellings the people tried to follow him by stacking mortars one atop another into a great tower, reaching almost to the sky — until they pulled out the bottom mortar to finish the top, and the whole tower crashed down.
+
+So Nyame became the remote high god, approached not directly but through the lesser powers, the abosom (deities of rivers and places), and above all through the ancestors — the honoured dead of each lineage, whose stools are kept and fed, and who carry the prayers of the living toward the creator who first set the world in order and then drew away.`,
+    themes: ['sky-earth', 'ancestors', 'fertility', 'sun'],
+    relatedTexts: [
+      { title: 'Ashanti', author: 'R. S. Rattray', type: 'Primary ethnographic study (Oxford, 1923)', url: '' },
+      { title: 'An Essay on African Philosophical Thought: The Akan Conceptual Scheme', author: 'Kwame Gyekye', type: 'Scholarly study (Cambridge, 1987)', url: '' },
+      { title: 'Akan religion (overview)', author: '', type: 'Reference', url: 'https://en.wikipedia.org/wiki/Akan_religion' },
+    ],
+    imageUrl: '',
+  },
+
+  ainu: {
+    id: 'ainu',
+    title: 'The Wagtail Who Beat the Land from the Waters',
+    civilization: 'Ainu',
+    dateRange: '1200–1868 CE',
+    category: 'earth-diver',
+    summary: `In the Ainu creation the world was at first a featureless quagmire of mingled mud and water, with no dry place to stand. The creator sent down a small water-wagtail, which beat the slush with its wings and tail and trampled it with its feet until firm land was packed up out of the waters — and the floating island of Ainu Mosir, the "land of humans," took shape.`,
+    fullText: `The Ainu, the indigenous people of Hokkaido, Sakhalin, and the Kuril Islands, hold that the cosmos is divided between Kamuy Mosir, the land of the kamuy (the gods and spirits that fill the world), and Ainu Mosir, "the land of humans" — the world we inhabit. In the beginning, the tradition recorded by missionaries and ethnographers in the 19th and early 20th centuries tells, Ainu Mosir did not yet exist as solid ground.
+
+At first the world below was a half-formed waste — water and soft mud churned together into a bottomless quagmire, with no firm place anywhere. The creator god (Kotan-kar-kamuy, "the maker of lands and places") looked down upon this slush and resolved to make a world fit for living beings.
+
+He sent down a small bird — the water-wagtail. The little bird worked over the mire tirelessly: it beat the watery mud with its fluttering wings, lashed and parted it with its tail, and trampled and packed it down with its feet. Slowly, where the wagtail worked, the wet sludge began to firm and gather, the waters drew off, and patches of solid ground rose up out of the flood. In time the beaten earth spread into the dry land, the floating world of Ainu Mosir, ridged with mountains and laced with rivers. The wagtail is honoured ever after as the bird that made the land.
+
+Onto this new world the kamuy descended and the world filled with life and spirit-power. For the Ainu every important being — the bear above all, but also the owl, the orca, fire, and the great rivers — is a kamuy who has put on a visible "costume" of fur or feather or flame to visit the human land. In the great bear ceremony, the iyomante, a bear is honoured and ritually sent back to the land of the gods, carrying gifts and goodwill — a continual exchange between the two worlds that were first separated when the wagtail beat dry land out of the primordial waters.`,
+    themes: ['earth-diver', 'water', 'animals', 'land'],
+    relatedTexts: [
+      { title: 'The Ainu and Their Folk-Lore', author: 'John Batchelor', type: 'Primary ethnography (1901)', url: 'https://en.wikipedia.org/wiki/Ainu_creation_myth' },
+      { title: 'Ainu Creed and Cult', author: 'Neil Gordon Munro', type: 'Ethnographic study (1962)', url: '' },
+      { title: 'Ainu creation myth (overview)', author: '', type: 'Reference', url: 'https://en.wikipedia.org/wiki/Ainu_creation_myth' },
+    ],
+    imageUrl: '',
+  },
+
+  tagalog: {
+    id: 'tagalog',
+    title: 'The Sky, the Sea, and the First Bamboo',
+    civilization: 'Tagalog (Philippines)',
+    dateRange: '900–1700 CE',
+    category: 'world-parent',
+    summary: `In the Tagalog creation, only the sky and the sea existed, with a great kite flying tirelessly between them. To end their endless quarrel — the sea heaving its waters up at the sky — the sky pelted the sea with islands, pinning it down and making the land. A floating bamboo struck the bird's feet and split open, releasing the first man and woman, Malakas and Maganda.`,
+    fullText: `The Tagalog people of Luzon, whose supreme being is Bathala, the maker and keeper of all things, tell that in the beginning there were only two: the sky above and the sea below. Between them flew a single bird — in most tellings a great kite (lawin) — that had nowhere to come to rest, for there was as yet no land in all the world.
+
+Weary of endless flight, the bird schemed to make a resting place. It stirred up the sea against the sky, splashing and heaving the waters upward, and whispered to the sky that the sea meant to rise and drown it. Angered and threatened, the sky hurled down islands upon the sea to weigh it and hold it in its place. So the waters were pinned beneath the scattered land, and the sea, defeated, drew back into its bounds. The bird at last had ground to land upon.
+
+As the kite rested on a shore, a length of bamboo came floating on the waves and struck against its feet. The bird, startled and irritated, pecked hard at the bamboo, and the stalk split open at its joints. From one section stepped the first man, Malakas ("the Strong"), and from the other the first woman, Maganda ("the Beautiful"). From this first pair, in the Tagalog telling, all the peoples of the islands are descended — and the differing fortunes of their many children were said to explain the chiefs, the free folk, the servants, and the peoples who sailed away to distant lands.
+
+This account — a primal sky and sea, a mediating bird, land made to part them, and humanity born from a split bamboo — belongs to the wider Austronesian world: cousins of it are told across the Philippines and maritime Southeast Asia, carried by the same seafaring peoples whose voyages eventually reached far out into the Pacific.`,
+    themes: ['sky-earth', 'water', 'animals', 'tree'],
+    relatedTexts: [
+      { title: 'Philippine Folk Tales', author: 'Mabel Cook Cole', type: 'Folklore collection (1916)', url: 'https://en.wikipedia.org/wiki/Philippine_mythology' },
+      { title: 'Philippine Folk Literature: The Myths', author: 'Damiana L. Eugenio', type: 'Scholarly anthology (Univ. of the Philippines Press, 1993)', url: '' },
+      { title: 'Philippine creation myths (overview)', author: '', type: 'Reference', url: 'https://en.wikipedia.org/wiki/Philippine_mythology' },
     ],
     imageUrl: '',
   },

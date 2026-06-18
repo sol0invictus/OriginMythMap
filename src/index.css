@@ -26,6 +26,7 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   display: grid;
   grid-template-rows: auto auto 1fr auto;
   height: 100vh;
+  height: 100dvh;   /* account for mobile browser chrome where supported */
   overflow: hidden;
 }
 
@@ -1693,7 +1694,18 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   }
   .header-left { justify-content: space-between; }
   .header-center { max-width: 100%; }
-  .header-right { justify-content: flex-start; flex-wrap: wrap; }
+  /* Keep the toolbar a single swipeable row rather than a tall wrapped block */
+  .header-right {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .header-right::-webkit-scrollbar { display: none; }
+  .header-right > button,
+  .header-right .active-filter { flex-shrink: 0; }
   .app-subtitle { display: none; }
   .app-title { font-size: 1.1rem; }
 
@@ -2850,7 +2862,8 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: auto;            /* narrow screens scroll the diagram sideways */
+  -webkit-overflow-scrolling: touch;
 }
 .lineage-scroll::-webkit-scrollbar { width: 9px; }
 .lineage-scroll::-webkit-scrollbar-track { background: transparent; }
@@ -2891,3 +2904,106 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 .lineage-tt-independent { color: #7e93a0; font-style: italic; }
 .lineage-tt-hint { font-size: 0.68rem; color: #6e8089; font-style: italic; margin-top: 3px; }
 .lineage-edge-tip strong { color: #ffd97a; }
+
+/* Clicked-arrow relationship panel */
+.lineage-edge-panel {
+  position: absolute;
+  top: 68px;
+  right: 16px;
+  width: 310px;
+  max-width: calc(100% - 32px);
+  max-height: calc(100% - 92px);
+  overflow-y: auto;
+  background: rgba(10,16,18,0.97);
+  border: 1px solid #2a3a44;
+  border-radius: 10px;
+  padding: 16px 16px 14px;
+  z-index: 9;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 12px 44px rgba(0,0,0,0.6);
+  animation: fade-in 0.2s ease-out;
+}
+.lep-close {
+  position: absolute; top: 9px; right: 11px;
+  background: none; border: none; color: #7e93a0;
+  font-size: 0.9rem; cursor: pointer; line-height: 1;
+}
+.lep-close:hover { color: #f0ead8; }
+.lep-route {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 7px;
+  font-family: 'Cinzel', serif; font-size: 0.92rem; padding-right: 18px;
+}
+.lep-arrow { color: #c9a24b; }
+.lep-label {
+  margin-top: 7px;
+  font-family: sans-serif; font-size: 0.66rem; letter-spacing: 0.06em;
+  text-transform: uppercase; color: #c9a24b;
+}
+.lep-desc { margin-top: 11px; font-size: 0.86rem; line-height: 1.62; color: #d6dae2; }
+.lep-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.lep-actions button {
+  background: rgba(201,162,75,0.12);
+  border: 1px solid #3a4a44;
+  color: #e8dfb0;
+  font-family: sans-serif; font-size: 0.74rem;
+  padding: 6px 11px; border-radius: 7px; cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.lep-actions button:hover { border-color: #c9a24b; background: rgba(201,162,75,0.22); }
+
+/* ═══════════════════════════════════════════════════════════════
+   Mobile — constellation / network + touch polish
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Layout toggle: one swipeable row, drop secondary text */
+  .constellation-controls {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    max-width: calc(100vw - 24px);
+    gap: 5px;
+    padding: 5px 8px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .constellation-controls::-webkit-scrollbar { display: none; }
+  .constellation-controls-label,
+  .constellation-hint { display: none; }
+  .const-layout-btn { padding: 4px 9px; font-size: 0.7rem; flex-shrink: 0; }
+
+  /* StarGraph era legend: compact, out of the way */
+  .constellation-legend {
+    top: auto; bottom: 12px; right: 10px;
+    min-width: 0; padding: 8px 10px;
+  }
+  .const-legend-foot { display: none; }
+  .const-legend-name { font-size: 0.68rem; }
+
+  /* Lineage network header: title + era dots only */
+  .lineage-header { gap: 10px; padding: 6px 12px; }
+  .lh-sub, .lh-key { display: none; }
+  .lh-eralegend { margin-left: auto; gap: 9px; }
+  .lh-era { font-size: 0.62rem; }
+  .lh-title { font-size: 0.9rem; }
+
+  /* Relationship detail panel → bottom sheet */
+  .lineage-edge-panel {
+    top: auto; bottom: 0; left: 0; right: 0;
+    width: 100%; max-width: 100%;
+    max-height: 60%;
+    border-radius: 14px 14px 0 0;
+  }
+
+  /* Keep floating tooltips inside the viewport */
+  .lineage-tooltip,
+  .constellation-tooltip,
+  .map-tooltip { max-width: calc(100vw - 24px); }
+
+  /* Comfortable tap targets on the main toolbar */
+  .header-right > button { min-height: 32px; }
+  .theme-shortcut { min-height: 30px; }
+}
+
+/* Coarse-pointer (touch) devices: enlarge the constellation hit targets a touch */
+@media (hover: none) and (pointer: coarse) {
+  .const-layout-btn { padding-top: 6px; padding-bottom: 6px; }
+}
