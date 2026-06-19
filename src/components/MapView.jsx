@@ -28,6 +28,12 @@ function loadGeoJson(civId) {
 const prefersReducedMotion = typeof window !== 'undefined' &&
   window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 
+// Touch devices fire a synthetic, sticky `mouseover` (with no matching
+// `mouseout`), so the hover-resonance highlight would never clear. Disable it
+// there — selecting a region still highlights just that region.
+const isCoarsePointer = typeof window !== 'undefined' &&
+  window.matchMedia?.('(pointer: coarse)').matches
+
 function makeArcPath(pa, pb, idx) {
   const mx = (pa.x + pb.x) / 2
   const my = (pa.y + pb.y) / 2
@@ -62,6 +68,7 @@ export default function MapView({
   const inflSourcesRef      = useRef(new Set())
   const inflSourceLayersRef = useRef({})
   const civMarkerRef        = useRef(null)
+  const selectedLayerIdRef  = useRef(null)
   const [hoveredCiv, setHoveredCiv]   = useState(null)
   const [hoveredMig, setHoveredMig]   = useState(null)
   const [hoveredInfl, setHoveredInfl] = useState(null)
@@ -73,6 +80,10 @@ export default function MapView({
     const map = L.map(mapRef.current, {
       center: [20, 10], zoom: 2, minZoom: 1, maxZoom: 8, zoomControl: true,
       worldCopyJump: false,
+      // Keep the viewport pinned over the actual world so users can't pan into
+      // the empty gray margins where tile servers return "Map data not available".
+      maxBounds: [[-84, -180], [84, 180]],
+      maxBoundsViscosity: 1.0,
       // Smoother wheel/pinch zoom
       zoomSnap: 0.25,
       zoomDelta: 0.5,
@@ -160,21 +171,24 @@ export default function MapView({
       tileLayerRef.current = null
     }
     const esri = 'Tiles &copy; Esri'
+    // Clamp tile requests to the populated world extent — beyond this the
+    // servers hand back blank "Map data not available" placeholder tiles.
+    const tileBounds = [[-84, -180], [84, 180]]
     let layers
     if (theme === 'light') {
       const base = L.tileLayer(
         'https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}',
-        { attribution: `${esri} &mdash; US National Park Service`, maxZoom: 8, noWrap: true, zIndex: 1 }
+        { attribution: `${esri} &mdash; US National Park Service`, maxZoom: 8, noWrap: true, bounds: tileBounds, zIndex: 1 }
       )
       const labels = L.tileLayer(
         'https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places_Alternate/MapServer/tile/{z}/{y}/{x}',
-        { attribution: esri, maxZoom: 13, noWrap: true, zIndex: 2 }
+        { attribution: esri, maxZoom: 13, noWrap: true, bounds: tileBounds, zIndex: 2 }
       )
       layers = [base, labels]
     } else {
       layers = [L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>',
-        subdomains: 'abcd', maxZoom: 20, noWrap: true, zIndex: 1,
+        subdomains: 'abcd', maxZoom: 20, noWrap: true, bounds: tileBounds, zIndex: 1,
       })]
     }
     layers.forEach(l => l.addTo(map))
@@ -191,10 +205,14 @@ export default function MapView({
     const arcSvg = arcSvgRef.current
     if (!map || !pane) return
 
-    // Compute the visible civ set under current state
+    // Compute the visible civ set under current state.
+    // "All Eras" must win over the (always-on) timeline filter, otherwise the
+    // toggle looks dead — the timeline year would keep narrowing the set.
     let visible
     if (filterTheme) {
       visible = civilizations.filter(c => myths[c.mythId]?.themes?.includes(filterTheme))
+    } else if (showAll) {
+      visible = civilizations
     } else if (timelineYear != null) {
       const MIN_YEAR = -5000
       visible = civilizations.filter(c => {
@@ -202,8 +220,6 @@ export default function MapView({
         if (start < MIN_YEAR) return timelineYear <= MIN_YEAR
         return start <= timelineYear && timelineYear <= end
       })
-    } else if (showAll) {
-      visible = civilizations
     } else {
       visible = civilizations.filter(c => c.era === selectedEra)
     }
@@ -228,34 +244,24 @@ export default function MapView({
         style: { color: eraColor, weight: 2, fillColor: eraColor, fillOpacity: baseOpacity },
         onEachFeature: (_, fl) => {
           featureLayerRef = fl
-          fl.on({
-            mouseover: () => {
+          const handlers = { click: () => onCivClick(civ) }
+          if (!isCoarsePointer) {
+            // Hover highlights ONLY the hovered region — no theme-resonance
+            // spill-over onto the rest of the era.
+            handlers.mouseover = () => {
               fl.setStyle({ fillOpacity: 0.65, weight: 3 })
               setHoveredCiv(civ)
-              const myThemes = myths[civ.mythId]?.themes || []
-              Object.entries(layerMetaRef.current).forEach(([otherId, meta]) => {
-                if (otherId === civ.id) return
-                const otherCiv = civilizations.find(c => c.id === otherId)
-                const otherThemes = myths[otherCiv?.mythId]?.themes || []
-                if (!myThemes.some(t => otherThemes.includes(t))) return
-                resonatingRef.current.add(otherId)
-                // Steady highlight of theme-related regions (no blinking pulse)
-                meta.setStyle({ fillOpacity: meta.baseOpacity + 0.28, weight: 3 })
-              })
-            },
-            mouseout: () => {
+            }
+            handlers.mouseout = () => {
               const meta = layerMetaRef.current[civ.id]
-              fl.setStyle({ fillOpacity: meta?.baseOpacity ?? baseOpacity, weight: 2 })
+              // Don't stomp the highlight of the currently-selected region.
+              if (selectedLayerIdRef.current !== civ.id) {
+                fl.setStyle({ fillOpacity: meta?.baseOpacity ?? baseOpacity, weight: 2 })
+              }
               setHoveredCiv(null)
-              resonatingRef.current.forEach(id => {
-                const m = layerMetaRef.current[id]
-                if (!m) return
-                m.setStyle({ fillOpacity: m.baseOpacity, weight: 2 })
-              })
-              resonatingRef.current.clear()
-            },
-            click: () => onCivClick(civ),
-          })
+            }
+          }
+          fl.on(handlers)
         },
       }).addTo(map)
 
@@ -735,12 +741,38 @@ export default function MapView({
     return () => clearTimeout(timeoutId)
   }, [selectedCiv, filterTheme, showInfluences])
 
-  // ── Selected civilization glowing marker ─────────────────────
+  // ── Selected civilization: highlight ONLY that region + marker ───
   useEffect(() => {
     const map = mapInstanceRef.current
     if (!map) return
     if (civMarkerRef.current) { map.removeLayer(civMarkerRef.current); civMarkerRef.current = null }
+
+    // Revert the region highlighted for the previous selection.
+    const prevId = selectedLayerIdRef.current
+    if (prevId && layerMetaRef.current[prevId]) {
+      const pm = layerMetaRef.current[prevId]
+      pm.setStyle({ fillOpacity: pm.baseOpacity, weight: 2 })
+    }
+    selectedLayerIdRef.current = null
+
+    // Clear any stuck hover-resonance. When the popup opens over the map the
+    // region's `mouseout` never fires, so theme-related regions would otherwise
+    // stay lit — making it look like every region is highlighted.
+    resonatingRef.current.forEach(id => {
+      const m = layerMetaRef.current[id]
+      if (m) m.setStyle({ fillOpacity: m.baseOpacity, weight: 2 })
+    })
+    resonatingRef.current.clear()
+
     if (!selectedCiv?.centroid) return
+
+    // Emphasise only the selected region's polygon (if it's on the map).
+    const selMeta = layerMetaRef.current[selectedCiv.id]
+    if (selMeta) {
+      selMeta.setStyle({ fillOpacity: 0.6, weight: 3 })
+      selectedLayerIdRef.current = selectedCiv.id
+    }
+
     const [lat, lng] = selectedCiv.centroid
     const color = ERAS.find(e => e.id === selectedCiv.era)?.color || '#c9981a'
     civMarkerRef.current = L.circleMarker([lat, lng], {

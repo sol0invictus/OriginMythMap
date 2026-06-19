@@ -30,7 +30,7 @@ export const migrations = [
     color: '#9b6ad4',
     description: `Humans crossed into the Americas from Siberia via Beringia — the land bridge now submerged beneath the Bering Strait — during the Last Glacial Maximum when sea levels were 120m lower than today. Two main theories exist: a coastal kelp-highway route by boat along the Pacific coast, and an inland ice-free corridor route through present-day Alberta. Both routes led to rapid dispersal throughout the Americas within a few thousand years, reaching Patagonia by ~12,500 BCE. This single migration event is the source of all pre-Columbian mythological traditions in the Americas, from the Haudenosaunee Sky Woman to the Aztec Five Suns to the Inca Viracocha.`,
     mythLink: 'Every civilization in the Americas on this map — Haudenosaunee, Aztec, Maya, Inca — descends from this founding migration, which is why earth-diver, flood, and sky-world themes recur across cultures with no later contact.',
-    relatedCivIds: ['haudenosaunee', 'aztec', 'maya', 'inca', 'cherokee'],
+    relatedCivIds: ['yupik-inuit', 'haudenosaunee', 'cherokee', 'lakota', 'navajo', 'hopi', 'maya', 'aztec', 'muisca', 'inca', 'guarani', 'mapuche'],
     waypoints: [
       [60, 140],   // Siberia (origin)
       [64, 170],   // Eastern Siberia
@@ -122,7 +122,7 @@ export const migrations = [
     color: '#6ab55a',
     description: `The spread of Bantu-speaking agricultural peoples from the Nigeria-Cameroon border region throughout central, eastern, and southern Africa over approximately 1,500 years. This expansion introduced iron-working, agriculture, and — crucially — a shared mythological substrate. Bantu-speaking peoples today include the Zulu, Shona, Kikuyu, and hundreds of other ethnic groups whose creation traditions share common structural features: a high god (Mulungu, Nyambe, Katonda) who creates and then withdraws, primal humans who displease the creator, and myths explaining the origin of death.`,
     mythLink: 'The Yoruba (West Africa) and Zulu (Southern Africa) traditions are connected by this expansion — both descended from a West African origin tradition that spread south and east with Bantu-speaking agriculturalists.',
-    relatedCivIds: ['yoruba', 'san-people'],
+    relatedCivIds: ['yoruba', 'kuba', 'zulu', 'san-people'],
     waypoints: [
       [5, 12],     // Nigeria-Cameroon border (origin)
       [-3, 18],    // Congo Basin
@@ -203,7 +203,7 @@ export const migrations = [
     color: '#c4904a',
     description: `The network of overland and maritime trade routes connecting East Asia to the Mediterranean, active for over 1,600 years. The Silk Road was not merely a trade route — it was the world's first intercultural transmission network, carrying Buddhism, Zoroastrianism, Manichaeism, Nestorian Christianity, and Islam eastward, and Taoist and Confucian ideas westward. Creation myths and cosmological concepts traveled with merchants, missionaries, and diplomats: Buddhist cosmology reached China alongside silk; Persian dualism influenced Gnostic Christianity; Indian astronomical systems reached Islamic Baghdad and then medieval Europe.`,
     mythLink: 'The Silk Road explains why Chinese (Pangu), Indian (Puranic), and Persian (Zoroastrian) creation concepts show philosophical cross-pollination despite originating independently — centuries of exchange blurred the boundaries.',
-    relatedCivIds: ['hindu-puranic', 'zoroastrian', 'rome'],
+    relatedCivIds: ['han-china', 'hindu-puranic', 'tibetan', 'zoroastrian', 'rome'],
     waypoints: [
       [34, 109],   // Chang'an (Xi'an) — eastern terminus
       [40, 82],    // Dunhuang / Tarim Basin

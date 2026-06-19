@@ -5,7 +5,7 @@ export const myths = {
     title: 'The Dreaming (Tjukurpa)',
     civilization: 'Aboriginal Australia',
     dateRange: '50,000+ BCE',
-    summary: `In the Dreaming (Tjukurpa) — an ever-present sacred reality, not a past event — ancestral beings rose from a featureless earth and sang the world into being as they journeyed across it. Mountains, rivers, and waterholes are the traces of their paths, and living people remain bound to remember and care for that creation.`,
+    summary: `The Dreaming, or Tjukurpa, is a sacred reality that is always present rather than a story set in the past. The ancestral beings rose from a flat, featureless earth and sang the world into being as they walked across it; the mountains, rivers, and waterholes are the marks they left. The living are still bound to remember that creation and care for the country it made.`,
     fullText: `The Dreaming (or Dreamtime, called Tjukurpa in the Anangu language, Alcheringa in Arrernte) is the foundational cosmological concept of Aboriginal Australian spirituality. It is not a distant past but an eternal, omnipresent sacred reality that underlies and continuously shapes the visible world.
 
 In the beginning, the earth was a flat, featureless plain — potential but unformed. The Ancestor beings slept beneath its surface. Then, in a great stirring, they rose up: the Rainbow Serpent, the Wandjina cloud spirits, the Baiame sky father, the Ancestral kangaroos and emus, the Seven Sisters of the Pleiades. Each people carries different Ancestors according to their land and lineage.
@@ -68,7 +68,7 @@ Enki, bound by the divine decision not to warn humans directly, whispered the pl
 The flood swept over the land for seven days and seven nights. The mighty storm overwhelmed the earth; the great boat was tossed on the churning waters. When it subsided, the sun god Utu emerged and shed his light into the great boat. Ziusudra opened a window, prostrated himself before the sun, and sacrificed an ox and a sheep.
 
 Anu and Enlil, moved by Ziusudra's piety and the renewal he represented, granted him life like a god — immortal existence in the distant paradise-land of Dilmun, at the mouth of the rivers, where the sun rises.`,
-    category: 'chaos-combat',
+    category: 'world-parent',
     themes: ['water', 'chaos', 'flood', 'creation-from-body', 'kingship'],
     relatedTexts: [
       { title: 'Eridu Genesis (Sumerian tablet, c. 1600 BCE — Nippur)', author: '', type: 'Primary source', url: 'https://en.wikipedia.org/wiki/Eridu_Genesis' },
@@ -135,7 +135,7 @@ Ahura Mazda first created the spiritual (menog) world — pure, immaterial forms
 This material creation was itself a stratagem: by making a finite, bounded world, Ahura Mazda could lure Angra Mainyu into it and trap him — for the evil spirit, seeing a perfect world, could not resist attacking it. Angra Mainyu burst through the sky, poisoned the waters, made the earth mountainous, withered the first plant, killed the Bull and Gayomart. But from the dying Bull's seed the world's animals arose; from Gayomart's seed, purified by the sun, grew a rhubarb plant that became the first human couple, Mashya and Mashyana.
 
 The material world is thus a battlefield and a trap. Each good deed, truth-telling, and fire-tending by humans strengthens Ahura Mazda's side. At the end of time (Frashokereti), good will triumph, the dead will be resurrected, and creation will be renewed into a perfect, immortal state.`,
-    category: 'chaos-combat',
+    category: 'ex-nihilo',
     themes: ['dualism', 'fire', 'battle', 'creation-from-body', 'cycles'],
     relatedTexts: [
       { title: 'Bundahishn (Zoroastrian cosmological text, compiled 9th century CE)', author: '', type: 'Primary source', url: 'https://en.wikipedia.org/wiki/Bundahishn' },
@@ -176,7 +176,7 @@ This vision — a dark chaos, a generative Desire, a watery slime, and a cosmic 
     civilization: 'Nubia / Kush',
     dateRange: '2500–350 BCE',
     summary: `The Kushites placed their own solar creator, Amun of Napata, atop the sacred mountain of Jebel Barkal — the primordial mound from which the world emerged. He breathed the first life into being, and each Nile flood re-enacted that first creation as the lion-god Apedemak guarded order against chaos.`,
-    fullText: `The Kingdom of Kush (with capitals at Kerma, Napata, and Meroe) developed a rich cosmological tradition that both absorbed and transformed Egyptian religious ideas over two millennia.
+    fullText: `No Kushite creation text survives intact; Meroitic script is still largely undeciphered, so the Napatan cosmogony has to be reconstructed from temple carvings, royal inscriptions, and the Egyptian ideas the Kushites took up and reworked over two millennia from their capitals at Kerma, Napata, and Meroe.
 
 The supreme creator deity in the Napatan tradition was Amun — but specifically Amun of Jebel Barkal (the "Pure Mountain"), the holy peak rising from the Nile near Napata. This sacred mountain, with its distinctive pinnacle rock formation, was seen as the primordial mound from which creation first emerged — the navel of the world. Amun breathed his life-force (ka) into this mound, and from it arose the first forms: light, air, water, and earth.
 
@@ -199,7 +199,7 @@ The Meroitic writing system, still only partially deciphered, likely preserves c
     id: 'korea',
     title: 'The Changse-ga — Mireuk Parts Sky and Earth',
     civilization: 'Korea (Changse-ga)',
-    dateRange: 'Shamanic oral tradition',
+    dateRange: '2333–108 BCE',
     category: 'world-parent',
     summary: `In the Korean shamanic creation song, sky and earth were once stuck fast together until the giant god Mireuk pried them apart and propped up the four corners of the sky with copper pillars. He set the doubled suns and moons in order, raised the first humans from insects sent by Heaven, then lost the world to the trickster god Seokga, whose cheating won him the flawed present age.`,
     fullText: `The Changse-ga ("Song of Creation") is the Korean shamanic creation narrative, sung by hereditary shamans and preserved in the muga (shaman songs) of the northern Hamhung region. The fullest version was recorded by the folklorist Son Jin-tae in 1923 from the shaman Kim Ssang-dori, but it preserves a far older oral cosmogony predating the arrival of Buddhism and Confucianism — though it has since borrowed their names.
@@ -249,10 +249,10 @@ Kronos, now ruler, feared a prophecy that his own child would overthrow him, and
     title: 'Popol Vuh — The Makers Shape Humanity',
     civilization: 'Maya Civilization',
     dateRange: '250–900 CE',
-    summary: `In the Popol Vuh, the gods Tepeu and Gucumatz raise the earth from the sea with a single word. They fail to make humanity from mud and then wood before succeeding with maize — and only after the Hero Twins defeat the lords of the underworld do the sun and moon first rise.`,
+    summary: `In the Popol Vuh the makers Tepeu and Q'uq'umatz call the earth up out of the sea with a single word. They try and fail to shape people from mud and then from wood before they succeed with maize, and only after the Hero Twins beat the lords of the underworld do the first sun and moon climb into the sky.`,
     fullText: `The Popol Vuh ("Book of the Community" or "Book of the People") is the great creation narrative of the K'iche' Maya, written down in the 16th century but preserving ancient oral tradition.
 
-In the beginning there was only the sky and the sea, in stillness and silence. The creator gods Tepeu (the Sovereign Plumed Serpent) and Gucumatz (Heart of Sky and Heart of Earth) discussed creation, and with their word alone — "Earth!" — the land emerged from the waters.
+In the beginning there was only the sky and the sea, still and silent. Two makers talked over what should come next: Tepeu the Sovereign and Q'uq'umatz the Plumed Serpent, joined by Heart of Sky, the god Huracan. At their word, "Earth," the land rose out of the water.
 
 They first made animals, commanding them to speak and honor the gods — but animals could only squawk and howl, not form words. They then fashioned humans from mud, but these dissolved in water and fell apart. Their second attempt was with carved wood: humans who looked human but had no souls, no memory, and did not honor the gods. The gods destroyed this wooden race with a flood and with their own tools rising against them.
 
@@ -389,19 +389,21 @@ Izanami died giving birth to the fire god Kagutsuchi. Devastated, Izanagi follow
 
   slavic: {
     id: 'slavic',
-    title: 'Rod, the Cosmic Egg, and Svarog the Smith',
+    title: 'The Earth Raised from the Sea, and Svarog\'s Forge',
     civilization: 'Slavic Peoples',
     dateRange: '500–1200 CE',
-    summary: `The supreme god Rod lay enclosed in a cosmic egg in the void, then broke free to separate light from darkness and form the world from its fragments. His son Svarog, the heavenly smith, forged the sun, moon, and stars on his anvil and set the laws of human life.`,
-    fullText: `Pre-Christian Slavic religion, suppressed and overlaid by the Christianization of the Slavic peoples (9th–12th centuries CE), is known primarily through Russian chronicle condemnations, folklore, and comparative mythology. The creation narrative centers on Rod and Svarog.
+    summary: `Slavic paganism left no creation text of its own, so its oldest myth is reconstructed from folklore: God and his dark adversary cross the first sea, and a diver brings up a handful of sand that grows into the land. The smith-god Svarog then forges the sun and the order of the world, and his son Dazhbog carries the sun across the sky.`,
+    fullText: `Slavic paganism was never written down by its own believers. It was suppressed as the Slavs became Christian between the ninth and twelfth centuries, and what survives reaches us secondhand: disapproving notes in Russian chronicles, the names of gods in treaties and sermons, and a great deal of much later folklore. Any account of Slavic creation has to be pieced together from these scraps, so it is told with less certainty than the Greek or Norse myths.
 
-Rod (from the Proto-Slavic root for "birth" or "clan") was the supreme creator deity — the primordial, universal generative force. Before creation, Rod was enclosed within an egg floating in the void, compressed in darkness and potential. In an act of primordial will, he broke free from the egg, separating light (Prav — divine order) from darkness (Nav — the underworld realm of the dead), establishing the world of the living (Yav) between them. The three realms — Prav, Yav, and Nav — connected by the great World Tree (a cosmic oak or ash), are the core of Slavic cosmological geography.
+The oldest creation story the folklore actually preserves is an earth-diver, and it is dualistic. In the beginning there was only the dark sea. God and his adversary, the Devil in the Christianised versions and an older darker double of the creator beneath that, travelled together over the water. One of them dived to the bottom, or sent a duck down, and brought up a handful of sand. God scattered it on the surface and it grew into dry land. In many tellings the adversary hides a little of the earth in his mouth to keep for himself; when it swells he has to spit it out, and the lumps he scatters become the mountains and the bogs. So good and ill are mixed into the world from the first day.
 
-From Rod emerged Svarog ("the heavenly"), the celestial craftsman, who is associated with celestial fire and the forge. Svarog struck his divine anvil with a heavenly hammer and from the sparks fashioned the sun (Dazbog, his son), the moon, the stars, and fire. He then established the sacred laws of marriage and civilization, ordering human society.
+Over this world stood a few gods whose names are genuinely attested. Perun, who strikes with thunder and lightning, was the god of oaths and of warriors, cousin to Baltic Perkūnas and Vedic Parjanya. Veles ruled cattle, the underworld, and the dead, and was Perun's standing enemy. Svarog belonged to the sky-fire and the forge; a medieval Slavic gloss matches him to the smith-god Hephaestus and names his son Dazhbog, "the giving god," who was the sun. Mokosh, the one goddess in the official lists, watched over earth, water, and women's work.
 
-The earth itself, in many variants, was created by a divine duck (or two ducks — one white, one black) diving to the bottom of the primordial ocean to bring up mud, which expanded to become land — a motif shared with many other cultures of the Eurasian steppe. This earth-diver pattern connects Slavic cosmology to Siberian, Finnic, and North American traditions.`,
-    category: 'cosmic-egg',
-    themes: ['cosmic-egg', 'fire', 'tree', 'earth-diver', 'void'],
+Folk cosmology pictured a great tree, usually an oak, joining a world above, the middle world of people, and a world below, with the sun moving between them, and an island, Buyan, in the eastern sea where the sun rises.
+
+Much of what now circulates as "ancient Slavic mythology" — the supreme god Rod hatching the cosmos from an egg, and the tidy scheme of three realms called Prav, Yav, and Nav — is not medieval. It comes from nineteenth-century reconstruction and from the Book of Veles, a text forged in the twentieth century, and it lives today mainly in the modern Slavic Native Faith (Rodnovery) rather than in the old sources.`,
+    category: 'earth-diver',
+    themes: ['earth-diver', 'water', 'fire', 'dualism', 'tree'],
     relatedTexts: [
       { title: 'Slavic Mythology', author: 'Jan Machal', type: 'Scholarly study (1918, public domain)', url: 'https://en.wikipedia.org/wiki/Slavic_mythology' },
       { title: 'Gods of the Ancient Slavs', author: 'Marija Gimbutas', type: 'Scholarly study', url: '' },
@@ -496,7 +498,7 @@ Water birds — geese, swans, or ducks — saw her falling and flew up to slow h
 
 Many animals tried and failed — the depths were too great. Finally the Muskrat dove. He was gone so long that the others feared him dead. But at last he floated up, barely alive — and in his claws was a tiny bit of mud. A great turtle offered its back. The mud was placed there and began to grow, expand, and solidify, becoming the land of Turtle Island.
 
-Sky Woman walked and danced upon the new earth, and wherever she danced, plants grew — grasses, trees, corn, and medicine plants. She gave birth to a daughter, who in turn gave birth to twin sons: Sapling (or Flint) who was gentle and made things good for humans, and Flint (or Tawiskaron) who was sharp-edged and brought difficulty. Their struggle shaped the world into its balanced, dualistic form.`,
+Sky Woman walked and danced upon the new earth, and wherever she danced, plants grew — grasses, trees, corn, and medicine plants. She gave birth to a daughter, who in turn bore twin sons: Sapling, also called Teharonhiawako, who was gentle and made things good for people, and his brother Flint, or Tawiskaron, who was sharp-edged and brought hardship. The long pull between the two balanced the world.`,
     category: 'earth-diver',
     themes: ['earth-diver', 'water', 'twins', 'sky-earth', 'animals'],
     relatedTexts: [
@@ -540,7 +542,7 @@ Each form is paired, male and female, one generating from the other. The chant f
     title: 'Buga and the Three Worlds — The Shaman\'s Cosmos',
     civilization: 'Evenki / Tungusic Peoples of Siberia',
     dateRange: '20,000+ BCE',
-    summary: `The Evenki and kindred Siberian peoples hold one of the oldest shamanic traditions — the word "shaman" is itself Evenki. Their cosmos is three living worlds joined by a World Tree, made by the sky-god Buga (in one telling, from mud a diving bird raised from the sea), and the shaman's drum is the steed that carries them between realms.`,
+    summary: `The Evenki and their Siberian neighbours keep one of the oldest shamanic traditions; the word "shaman" comes from Evenki itself. Their cosmos is three living worlds strung on a World Tree, made by the sky-god Buga, in one telling from mud that a diving bird brought up from the sea. The shaman's drum is the mount that carries them between the worlds.`,
     fullText: `The Evenki (Ewenki), Tungus, Buryat, Yakut, and related peoples of Central and Eastern Siberia developed one of humanity's oldest and most geographically extensive spiritual traditions. The word "shaman" itself derives from the Evenki word šaman — a testament to how foundational this tradition is to human religious history.
 
 In the Evenki cosmos, the universe is divided into three realms connected by a great World Tree (Tuuru) whose roots reach into the underworld, whose trunk passes through the middle world of the living, and whose crown extends into the upper world of celestial spirits and the supreme being Buga (the "God," or "sky").
@@ -604,7 +606,7 @@ The plan succeeded — but too well. Humanity multiplied rapidly. Within a few c
 Finally, Enlil persuaded the assembly of gods to send the Flood, binding all gods — including Enki — with an oath of secrecy. But Enki spoke not to Atrahasis directly, but to the reed fence of his house: "Wall, listen! Dismantling your house, build a boat." Atrahasis built the boat, loaded it with animals and provisions, and survived seven days and seven nights of flood while the gods themselves cowered from the destruction they had made.
 
 When the flood receded, Atrahasis made offerings. The gods — who had not eaten during the flood — swarmed over the food like flies. The goddess Mami wept for the humanity she had created. A compromise was reached: henceforth, infant mortality, infertility, and natural death would control human numbers, so the gods could rest.`,
-    category: 'chaos-combat',
+    category: 'cosmic-sacrifice',
     themes: ['flood', 'creation-from-body', 'sacrifice', 'water', 'hero'],
     relatedTexts: [
       { title: 'Atra-Hasis: The Babylonian Story of the Flood', author: 'W.G. Lambert & A.R. Millard', type: 'Critical edition (Oxford, 1969)', url: '' },
@@ -672,10 +674,10 @@ The great Tibetan cosmological text, the Bardo Thodol ("Liberation Through Heari
     title: 'Faro and the Nommo — Water, Word, and the Loom',
     civilization: 'Mali Empire / Mande',
     dateRange: '1235–1600 CE',
-    summary: `In Mande cosmology the universe is woven into being, its warp time and its weft human action. The water spirit Faro — sacrificed and scattered, then restored — orders the world, while the amphibious Nommo twins descend by ark bearing the first crafts and the sacred, creative Word.`,
+    summary: `Mande cosmology imagines the universe as something woven, with time for its warp and human action for its weft. The water spirit Faro, cut to pieces and scattered and then restored, sets the world in order, while the amphibious Nommo twins come down by ark carrying the first crafts and the creative power of speech.`,
     fullText: `The Mande-speaking peoples of West Africa — including the Mandinka, Bambara, Soninke, and Dyula — were the foundation of the Mali Empire (c. 1235–1600 CE), the largest empire in medieval Africa. Their cosmology is one of the richest in the world, though it remains less known than the Greek, Norse, or Hindu traditions.
 
-In the Bambara and Mande cosmological tradition (studied especially by the French ethnographer Marcel Griaule and his colleagues among the related Dogon people), the supreme deity is Bemba (or Mangala), the primordial creator. Before anything existed, Bemba contained within himself the seed of creation — the "egg of the world" — from which all things would grow.
+In the Bambara and Mande cosmological tradition (recorded by the same French ethnographers, Griaule and his colleagues, whose neighbouring Dogon work is much debated), the supreme deity is Bemba (or Mangala), the primordial creator. Before anything existed, Bemba contained within himself the seed of creation — the "egg of the world" — from which all things would grow.
 
 Faro is the water spirit and cosmic order-keeper, a being both divine and monstrous, who sacrificed himself — was cut to pieces by Bemba as punishment for disorder — and whose scattered body became the rain, the rivers, and the seeds of life on earth. Faro was then restored by Bemba and sent back to rule the waters and maintain cosmic balance. His sacrifice and resurrection form the template for agricultural cycles: the grain that is cut and scattered becomes the next harvest.
 
@@ -702,6 +704,8 @@ The world is conceived as a loom. The vertical cords are the life-threads of ind
     fullText: `The Lakota Sioux (Teton Sioux) are one of the three branches of the Great Sioux Nation and have inhabited the Great Plains of North America for many centuries. Their cosmological tradition is one of the most fully documented of the North American indigenous traditions, preserved both through oral history and through anthropological records (notably James R. Walker's work with Lakota elders in the early 20th century).
 
 The Earth itself, in Lakota understanding, is Turtle Island — the land that grew from a handful of mud brought up from the bottom of the primordial flood. In one version: the world was once all water. Wakan Tanka (the Great Mystery, or Great Spirit) called upon the animals to help create dry land. One by one they dove to the bottom to bring up earth — all failed until the small, humble muskrat. Nearly drowned, the muskrat surfaced with a tiny amount of mud in its paws. The Creator took this mud and spread it on the back of a turtle, where it grew and grew until it became the whole continent. The turtle still carries the world.
+
+This water-and-muskrat version is told across the Plains, but the Lakota also keep an origin more their own. In it the people once lived inside the earth and came up into this world from Wind Cave (Washún Niyá) in the Black Hills, led out by Tokáhe, "the First One." And in the account the holy man George Sword gave to James Walker, the world itself begins when Iŋyaŋ, the primal Rock, drains his own blood to make Maka, the Earth: the blood becomes the blue waters, and the dome of the sky is stretched out from him.
 
 White Buffalo Calf Woman came to the Lakota at a time of great need. Two hunters on the plain saw a beautiful woman walking toward them, wrapped in white buckskin. One hunter had impure thoughts; the earth opened and swallowed him. The other returned to camp and told the chief, who assembled the people.
 
@@ -802,9 +806,9 @@ The cosmological meaning is explicit in Javanese tradition: the white screen is 
     id: 'babylon',
     title: 'Enuma Elish — When on High',
     civilization: 'Babylon',
-    dateRange: '1894–539 BCE',
+    dateRange: '1894–1595 BCE',
     summary: `In the Enuma Elish, the primordial waters Apsu and Tiamat mingle and birth the gods. When Tiamat raises an army of monsters, the young god Marduk slays her, splits her body into sky and earth, fashions humans from a slain god's blood, and is crowned king of all the gods.`,
-    fullText: `The Enuma Elish ("When on High") is the canonical creation epic of Babylon, composed in Akkadian and surviving on seven cuneiform tablets. It was recited in full on the fourth day of the Babylonian New Year festival (Akitu) and served to legitimize both Marduk's supremacy among the gods and Babylon's dominance among cities. Scholars date its written composition to the Old Babylonian period (c. 1700–1100 BCE), though it draws on older Sumerian traditions.
+    fullText: `The Enuma Elish ("When on High") is the canonical creation epic of Babylon, composed in Akkadian and surviving on seven cuneiform tablets. It was recited in full on the fourth day of the Babylonian New Year festival (Akitu) and worked to confirm both Marduk's supremacy among the gods and Babylon's standing among cities. Most scholars place its composition in the later second millennium BCE, perhaps around the twelfth century, though it reworks older Sumerian and Akkadian material; the tablets that survive were copied in the first millennium BCE.
 
 Before sky or earth had names, when no reed marsh had appeared and no destiny had been fixed, only the primordial waters existed. Apsu (the sweet freshwater beneath the earth) and Tiamat (the roaring salt sea) were mingled together as one. From their commingling the first gods emerged — Lahmu and Lahamu (the silt), then Anshar and Kishar (the horizon circle), and eventually the great gods including Anu, lord of heaven, and his son Ea (Enki), lord of wisdom and water.
 
@@ -818,7 +822,7 @@ Marduk built Babylon as the earthly reflection of his cosmic palace, and the gre
     category: 'chaos-combat',
     themes: ['water', 'chaos', 'battle', 'creation-from-body', 'kingship'],
     relatedTexts: [
-      { title: 'Enuma Elish (cuneiform tablets, c. 1700 BCE)', author: '', type: 'Primary source', url: 'https://en.wikipedia.org/wiki/Enuma_Elish' },
+      { title: 'Enuma Elish (Babylonian creation epic; composed late 2nd millennium BCE, surviving tablets 1st millennium BCE)', author: '', type: 'Primary source', url: 'https://en.wikipedia.org/wiki/Enuma_Elish' },
       { title: 'Myths from Mesopotamia', author: 'Stephanie Dalley (trans.)', type: 'Translation (Oxford, 1989)', url: '' },
       { title: 'Atrahasis: The Babylonian Story of the Flood', author: 'W.G. Lambert & A.R. Millard', type: 'Critical edition (1969)', url: '' },
       { title: 'Ancient Near Eastern Texts Relating to the Old Testament', author: 'James B. Pritchard (ed.)', type: 'Scholarly anthology', url: '' },
@@ -840,11 +844,11 @@ The Yamnaya left no written records, but their religion can be reconstructed thr
 
 At its center was *Dyeus Phter — "Sky Father." This deity, whose name simply means "shining sky" + "father," appears in every branch of Indo-European religion: as Zeus Pater (Greek), Jupiter (Latin), Dyaus Pita (Vedic Sanskrit), Tiwaz/Tyr (Germanic), Dievas (Baltic). He ruled the day sky, oaths, and divine order.
 
-The earth was personified as a mother goddess, *Dhéghom Méter — "Earth Mother" — appearing as Demeter (Greek), Żmij (Slavic), Danu (Celtic), and Prthivī Mātā (Vedic). The cosmic marriage of Sky Father and Earth Mother was the foundational creative act.
+The earth was a mother goddess, *Dʰéǵʰōm Méter, "Earth Mother," who survives as Demeter in Greece, Mati Syra Zemlya ("Moist Mother Earth") among the Slavs, Danu among the Celts, and Prithvi Mata in Vedic India. Her marriage to the Sky Father was the first creative act.
 
 Creation itself emerged from sacrifice. The primordial being *Yemo ("Twin") was slain — possibly by his twin brother *Manu ("Man," the ancestor of humanity) — and from his body the world was made. This pattern appears in the Vedic Purusha (whose dismemberment creates the cosmos), the Norse Ymir (whose body becomes the world after his death at the hands of Odin and his brothers), and Roman Remus.
 
-Divine twins — the *Dioscuri ("Sons of the Sky God") — appear in every Indo-European tradition as young horsemen who rescue the helpless, especially from the sea. They appear as the Greek Dioscuri (Castor and Pollux), the Vedic Ashvins, the Baltic Ašvieniai, and possibly the Norse Alf and Alf (Alfar).
+A pair of divine twins, the "Sons of the Sky God," ride through every Indo-European tradition as young horsemen who rescue people in danger, above all at sea: the Greek Dioscuri (Castor and Pollux), the Vedic Ashvins, the Baltic Ašvieniai, and the Germanic Alcis whom Tacitus reports among the Naharvali.
 
 The sacred fire, tended by a priestly class, was the medium of communication with the sky gods. The Yamnaya likely had a professional caste of fire priests — the ancestors of the Vedic Brahmins, the Iranian Magi, the Celtic Druids, and the Roman Flamines. Their expansion across Eurasia carried this entire religious system with them.`,
     category: 'cosmic-sacrifice',
@@ -863,7 +867,7 @@ The sacred fire, tended by a priestly class, was the medium of communication wit
     civilization: 'Dogon (Mali, West Africa)',
     dateRange: '1000–1800 CE',
     summary: `The Dogon hold that Amma, the supreme god, was a cosmic egg holding the seed of all existence, from which the universe vibrated outward. Out came the disruptive fox Ogo and the amphibious Nommo twins — one sacrificed and scattered to purify the earth — who descended by ark with the first crafts, seeds, and speech.`,
-    fullText: `The Dogon people of the Bandiagara Escarpment in present-day Mali preserve a cosmology of exceptional complexity and depth, most fully documented through the years-long dialogue between French anthropologist Marcel Griaule and the Dogon elder Ogotemmêli in the 1930s and '40s. The result — Ogotemmêli's philosophical exposition — is one of the most detailed indigenous cosmological texts from Africa.
+    fullText: `The Dogon of the Bandiagara Escarpment in present-day Mali are known for an unusually intricate cosmology, recorded above all in the long conversations between the French anthropologist Marcel Griaule and the Dogon elder Ogotemmêli in the 1930s and 1940s. It should be said plainly that Griaule's version is disputed: later fieldwork, especially Walter van Beek's in the 1980s, could not find much of this elaborate system among the Dogon themselves, and some of it may owe as much to Griaule as to his teachers. What follows is that recorded tradition.
 
 In the beginning, Amma (the supreme creator) existed alone. He was an egg — the cosmic egg, aduno tal, the "egg of the world." Within it was po — the tiniest seed, the primordial grain of fonio (a small African millet), which in the Dogon understanding is the smallest visible unit of matter and the starting point of all creation. From this seed Amma began to vibrate and expand, and the universe unfolded outward.
 

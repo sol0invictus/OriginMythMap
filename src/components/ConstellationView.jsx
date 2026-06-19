@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { civilizations, ERAS } from '../data/civilizations'
 import { myths } from '../data/myths'
 import { influences } from '../data/influences'
-import { getSvgGlyph } from '../utils/glyphs'
+import { getSvgGlyph, getHtmlGlyph } from '../utils/glyphs'
 
 // ════════════════════════════════════════════════════════════════════════
 //  Shared helpers
@@ -80,22 +80,56 @@ const ERA_COUNTS = ERA_ORDER.reduce((acc, id) => {
 const MAX_CONN = Math.max(...GRAPH_NODES.map(n => n.connections))
 const nodeRadius = c => 8 + (c / MAX_CONN) * 11
 
+// World regions become fixed spokes in the Era Rings view: every region keeps
+// the same angle on every ring, so reading outward along a spoke follows that
+// region's traditions through time. Ordered roughly west→east, Old World then
+// New, so neighbouring spokes are also geographic neighbours.
+const REGION_ORDER = [
+  'Europe', 'Middle East', 'Africa', 'West Africa', 'Central Africa', 'Southern Africa',
+  'Central Asia', 'South Asia', 'SE Asia', 'East Asia', 'Oceania',
+  'North America', 'Mesoamerica', 'South America',
+]
+const REGIONS = (() => {
+  const present = Array.from(new Set(GRAPH_NODES.map(n => n.region).filter(Boolean)))
+  present.sort((a, b) => {
+    const ia = REGION_ORDER.indexOf(a), ib = REGION_ORDER.indexOf(b)
+    return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || a.localeCompare(b)
+  })
+  const angle = {}
+  const step = (Math.PI * 2) / present.length
+  // +0.5 keeps any spoke from landing exactly on the vertical, where the era
+  // labels live.
+  present.forEach((r, i) => { angle[r] = -Math.PI / 2 + (i + 0.5) * step })
+  return { list: present, angle, count: present.length, step }
+})()
+const regionAngle = region => REGIONS.angle[region] ?? -Math.PI / 2
+
 function computeRingLayout(w, h) {
   const result = {}
   const radii = eraRingRadii(w, h)
   for (const era of ERA_ORDER) {
-    const nodes = GRAPH_NODES
-      .filter(n => n.era === era)
-      .slice()
-      .sort((a, b) => a.region.localeCompare(b.region) || a.name.localeCompare(b.name))
     const r = radii[era]
-    nodes.forEach((node, i) => {
-      const angle = (i / nodes.length) * Math.PI * 2 - Math.PI / 2
-      result[node.id] = { x: w / 2 + r * Math.cos(angle), y: h / 2 + r * Math.sin(angle) }
-    })
+    // Group this era's civs by region, then fan same-region civs across a slice
+    // of their spoke so they don't stack on the exact same point.
+    const byRegion = {}
+    GRAPH_NODES.filter(n => n.era === era).forEach(n => { (byRegion[n.region] ||= []).push(n) })
+    for (const region in byRegion) {
+      const cell = byRegion[region].slice().sort((a, b) => a.name.localeCompare(b.name))
+      const base = regionAngle(region)
+      const k = cell.length
+      const band = REGIONS.step * Math.min(0.85, 0.32 + k * 0.13)
+      cell.forEach((node, i) => {
+        const a = k === 1 ? base : base - band / 2 + (i / (k - 1)) * band
+        // gentle radial zig-zag de-collides crowded cells without blurring the ring
+        const rr = r + (k >= 3 ? ((i % 2) * 2 - 1) * 9 : 0)
+        result[node.id] = { x: w / 2 + rr * Math.cos(a), y: h / 2 + rr * Math.sin(a) }
+      })
+    }
   }
   return result
 }
+
+const GOLDEN_ANGLE = Math.PI * (3 - Math.sqrt(5))   // ~137.5°, even sunflower fill
 
 function computeCosmogenesisLayout(w, h) {
   const result = {}
@@ -112,10 +146,15 @@ function computeCosmogenesisLayout(w, h) {
     const hy = cy + HUB_R * Math.sin(hubAngle)
     const nodes = byArch[arch.id]
     if (nodes.length === 1) { result[nodes[0].id] = { x: hx, y: hy }; return }
-    const clusterR = Math.min(80, 24 + nodes.length * 5)
+    // Sunflower (phyllotaxis) packing fills the whole disk instead of a single
+    // thin rim, so even the big archetypes (sky-earth = 17, primordial-waters
+    // = 12) read as a spread, legible cluster rather than an overcrowded ring.
+    const k = nodes.length
+    const clusterR = Math.min(102, 18 * Math.sqrt(k) + 10)
     nodes.forEach((node, i) => {
-      const a = (i / nodes.length) * Math.PI * 2 - Math.PI / 2
-      result[node.id] = { x: hx + clusterR * Math.cos(a), y: hy + clusterR * Math.sin(a) }
+      const rr = clusterR * Math.sqrt((i + 0.5) / k)
+      const a = i * GOLDEN_ANGLE
+      result[node.id] = { x: hx + rr * Math.cos(a), y: hy + rr * Math.sin(a) }
     })
   })
   return result
@@ -138,7 +177,24 @@ function archetypeHubs(w, h) {
 
 const LAYOUT_FNS = { cosmogenesis: computeCosmogenesisLayout, rings: computeRingLayout }
 
-function StarGraph({ layout, filterTheme, onCivSelect }) {
+// Phones / touch devices: skip the GPU-heavy decoration (per-node blur filters,
+// continuous twinkle animations) and the per-frame intro/morph reflows that make
+// pinch-zoom stutter. Re-evaluates on resize/orientation change.
+function useIsMobile() {
+  const query = '(max-width: 768px), (pointer: coarse)'
+  const [mobile, setMobile] = useState(() =>
+    (typeof window !== 'undefined' && window.matchMedia?.(query).matches) || false)
+  useEffect(() => {
+    if (typeof window === 'undefined' || !window.matchMedia) return
+    const mq = window.matchMedia(query)
+    const onChange = () => setMobile(mq.matches)
+    mq.addEventListener?.('change', onChange)
+    return () => mq.removeEventListener?.('change', onChange)
+  }, [])
+  return mobile
+}
+
+function StarGraph({ layout, filterTheme, onCivSelect, isMobile }) {
   const containerRef = useRef(null)
   const [dims, setDims] = useState(null)
   const [positions, setPositions] = useState(null)
@@ -162,7 +218,8 @@ function StarGraph({ layout, filterTheme, onCivSelect }) {
   useEffect(() => {
     if (!dims) return
     const target = LAYOUT_FNS[layout](dims.w, dims.h)
-    if (introDoneRef.current) { setPositions(target); return }
+    // Phones: snap straight to the final layout — no per-frame intro reflow.
+    if (introDoneRef.current || isMobile) { introDoneRef.current = true; setPositions(target); return }
     const cx = dims.w / 2, cy = dims.h / 2
     const collapsed = {}
     GRAPH_NODES.forEach(n => { collapsed[n.id] = { x: cx, y: cy } })
@@ -194,6 +251,8 @@ function StarGraph({ layout, filterTheme, onCivSelect }) {
     if (!dims || !introDoneRef.current) return
     if (rafRef.current) cancelAnimationFrame(rafRef.current)
     const next = LAYOUT_FNS[layout](dims.w, dims.h)
+    // Phones: snap to the new layout instead of animating every node per frame.
+    if (isMobile) { setPositions(next); return }
     const from = positions || next
     const start = performance.now()
     const DURATION = 700
@@ -226,13 +285,13 @@ function StarGraph({ layout, filterTheme, onCivSelect }) {
 
   const bgStars = useMemo(() => {
     if (!dims) return []
-    return Array.from({ length: 90 }, () => ({
+    return Array.from({ length: isMobile ? 24 : 90 }, () => ({
       x: Math.random() * dims.w, y: Math.random() * dims.h,
       r: Math.random() * 1.1 + 0.3,
       delay: Math.random() * 6, duration: 3 + Math.random() * 4,
       opacity: 0.25 + Math.random() * 0.5,
     }))
-  }, [dims])
+  }, [dims, isMobile])
 
   if (!positions || !dims) {
     return <div ref={containerRef} className="constellation-stage" />
@@ -289,7 +348,7 @@ function StarGraph({ layout, filterTheme, onCivSelect }) {
         <g className="constellation-bg-stars" aria-hidden="true">
           {bgStars.map((s, i) => (
             <circle key={i} cx={s.x} cy={s.y} r={s.r} fill="#ffffff" fillOpacity={s.opacity}
-              style={{ animation: `twinkle ${s.duration}s ease-in-out ${s.delay}s infinite` }} />
+              style={isMobile ? undefined : { animation: `twinkle ${s.duration}s ease-in-out ${s.delay}s infinite` }} />
           ))}
         </g>
 
@@ -312,15 +371,45 @@ function StarGraph({ layout, filterTheme, onCivSelect }) {
           )
         })}
 
-        {/* Archetype labels (cosmogenesis) */}
+        {/* Region spokes (era rings) — one fixed angle per world region across
+            every ring, so a spoke reads as that region's traditions over time. */}
+        {(() => {
+          const innerR = Math.min(...ERA_ORDER.map(e => ringRadii[e]))
+          const outerR = Math.max(...ERA_ORDER.map(e => ringRadii[e]))
+          return REGIONS.list.map(region => {
+            const a = regionAngle(region)
+            const cos = Math.cos(a), sin = Math.sin(a)
+            const x1 = w / 2 + (innerR - 12) * cos, y1 = h / 2 + (innerR - 12) * sin
+            const x2 = w / 2 + (outerR + 8) * cos,  y2 = h / 2 + (outerR + 8) * sin
+            const lx = Math.max(54, Math.min(w - 54, w / 2 + (outerR + 18) * cos))
+            const ly = Math.max(12, Math.min(h - 10, h / 2 + (outerR + 18) * sin))
+            return (
+              <g key={region} opacity={isRings ? 1 : 0}
+                style={{ transition: 'opacity 0.4s ease', pointerEvents: 'none', userSelect: 'none' }}>
+                <line x1={x1} y1={y1} x2={x2} y2={y2} stroke="#6f7790" strokeOpacity={0.14}
+                  strokeWidth={1} strokeDasharray="1 8" />
+                <text x={lx} y={ly} textAnchor={cos < 0 ? 'end' : 'start'} dominantBaseline="middle"
+                  fontSize="8.5" fontFamily="Spectral, Georgia, serif" letterSpacing="0.08em"
+                  fill="#aab0c2" fillOpacity={0.82} style={{ textTransform: 'uppercase' }}>
+                  {region}
+                </text>
+              </g>
+            )
+          })
+        })()}
+
+        {/* Archetype labels (cosmogenesis) — pushed well outside the cluster
+            ring (past the node glow halo) and clamped to the stage, so they
+            read clearly and never sit on top of the civilization stars. */}
         {hubs.map(({ arch, x, y, angle, count }) => {
-          const lr = Math.min(95, 30 + count * 6)
-          const lx = x + Math.cos(angle) * lr * 1.05
-          const ly = y + Math.sin(angle) * lr * 1.05
+          const clusterR = count <= 1 ? 0 : Math.min(102, 18 * Math.sqrt(count) + 10)
+          const lr = clusterR + 60   // clear the cluster disk + the node glow halo
+          const lx = Math.max(72, Math.min(w - 72, x + Math.cos(angle) * lr))
+          const ly = Math.max(18, Math.min(h - 14, y + Math.sin(angle) * lr))
           return (
             <text key={arch.id} x={lx} y={ly} textAnchor="middle" dominantBaseline="middle"
               fontSize="10.5" fontFamily="Fraunces, Georgia, serif" letterSpacing="0.18em" fill="#d4c280"
-              fillOpacity={layout === 'cosmogenesis' ? 0.78 : 0}
+              fillOpacity={layout === 'cosmogenesis' ? 0.82 : 0}
               style={{ transition: 'fill-opacity 0.5s ease', textTransform: 'uppercase', pointerEvents: 'none' }}>
               {arch.glyph}  {arch.label.toUpperCase()}
             </text>
@@ -336,7 +425,10 @@ function StarGraph({ layout, filterTheme, onCivSelect }) {
           const connectedEdge = hoveredNode && (edge.source === hoveredNode.idx || edge.target === hoveredNode.idx)
           const themeEdge = filterTheme && edge.themes.includes(filterTheme)
           let stroke = 'url(#edge-gossamer)'
-          let opacity = hoveredNode || filterTheme ? 0.06 : 0.5
+          // Era Rings would be a hairball if every shared-theme thread showed at
+          // once — keep the rings clean and only reveal a node's links on hover
+          // (or when a theme filter is active). Cosmogenesis still shows them all.
+          let opacity = hoveredNode || filterTheme ? 0.06 : (isRings ? 0 : 0.5)
           let strokeWidth = 0.7
           if (connectedEdge) { stroke = hoveredNode.color; opacity = 0.78; strokeWidth = 1.6 }
           if (isHoveredEdge && !connectedEdge) { stroke = '#ffd97a'; opacity = 0.7; strokeWidth = 1.4 }
@@ -354,8 +446,10 @@ function StarGraph({ layout, filterTheme, onCivSelect }) {
               <line x1={sp.x} y1={sp.y} x2={tp.x} y2={tp.y} stroke={stroke} strokeWidth={strokeWidth}
                 strokeOpacity={opacity} strokeLinecap="round"
                 style={{ pointerEvents: 'none', transition: 'stroke-opacity 0.2s, stroke-width 0.2s' }} />
-              <line x1={sp.x} y1={sp.y} x2={tp.x} y2={tp.y} stroke="transparent" strokeWidth={12}
-                onMouseEnter={() => setHoveredEdge(edge)} onMouseLeave={() => setHoveredEdge(null)} />
+              {!isMobile && (
+                <line x1={sp.x} y1={sp.y} x2={tp.x} y2={tp.y} stroke="transparent" strokeWidth={12}
+                  onMouseEnter={() => setHoveredEdge(edge)} onMouseLeave={() => setHoveredEdge(null)} />
+              )}
               {isHoveredEdge && (
                 <g transform={`translate(${mx},${my})`} style={{ pointerEvents: 'none' }}>
                   <rect x={-labelW / 2} y={-10} width={labelW} height={20} rx={6}
@@ -399,10 +493,12 @@ function StarGraph({ layout, filterTheme, onCivSelect }) {
               onClick={() => onCivSelect(civById(node.id))}>
               <circle r={dr * 2.4} fill="url(#star-glow)" opacity={isHovered ? 1 : 0.55}
                 style={{ pointerEvents: 'none', transition: 'opacity 0.2s',
-                         animation: `node-twinkle ${twinkleDur}s ease-in-out ${twinkleDelay}s infinite` }} />
+                         animation: isMobile ? undefined : `node-twinkle ${twinkleDur}s ease-in-out ${twinkleDelay}s infinite` }} />
               <g style={{ pointerEvents: 'none' }} opacity={isHovered ? 0.95 : 0.7}>
-                <polygon points={`0,${-dr * 1.8} ${dr * 0.3},0 0,${dr * 1.8} ${-dr * 0.3},0`} fill={node.color} filter="url(#soft-glow)" />
-                <polygon points={`${-dr * 1.8},0 0,${-dr * 0.3} ${dr * 1.8},0 0,${dr * 0.3}`} fill={node.color} filter="url(#soft-glow)" opacity="0.85" />
+                <polygon points={`0,${-dr * 1.8} ${dr * 0.3},0 0,${dr * 1.8} ${-dr * 0.3},0`} fill={node.color} filter={isMobile ? undefined : 'url(#soft-glow)'} />
+                {!isMobile && (
+                  <polygon points={`${-dr * 1.8},0 0,${-dr * 0.3} ${dr * 1.8},0 0,${dr * 0.3}`} fill={node.color} filter="url(#soft-glow)" opacity="0.85" />
+                )}
               </g>
               <circle r={dr} fill="#0a0d14" stroke={node.color} strokeWidth={isHovered ? 2.5 : 1.5}
                 style={{ transition: 'stroke-width 0.15s' }} />
@@ -684,7 +780,8 @@ function LineageNetwork({ onCivSelect }) {
                 const isHov = hovered === c.id
                 const dim = isDim(c.id)
                 const col = eraColor(c.era)
-                const glyph = getSvgGlyph(c.id)
+                const glyph = getHtmlGlyph(c.id)   // richer "logo" set: emoji + script marks
+                const cps = Array.from(glyph).length
                 const r = isHov ? LN_R + 2 : LN_R
                 const name = c.name.length > 16 ? c.name.slice(0, 15) + '…' : c.name
                 return (
@@ -693,8 +790,8 @@ function LineageNetwork({ onCivSelect }) {
                     onMouseEnter={() => setHovered(c.id)} onMouseLeave={() => setHovered(null)}
                     onClick={() => onCivSelect(civById(c.id))}>
                     <circle r={r} fill="#0c1014" stroke={col} strokeWidth={isHov ? 3 : 2} />
-                    <text textAnchor="middle" dominantBaseline="central" fontSize={glyph.length > 1 ? 9 : 12}
-                      fontFamily="'Segoe UI Emoji','Noto Sans',serif" fill={col} style={{ pointerEvents: 'none', userSelect: 'none' }}>{glyph}</text>
+                    <text textAnchor="middle" dominantBaseline="central" fontSize={cps >= 3 ? 7.5 : isHov ? 15 : 13}
+                      fontFamily="'Segoe UI Emoji','Noto Color Emoji','Noto Sans',serif" fill={col} style={{ pointerEvents: 'none', userSelect: 'none' }}>{glyph}</text>
                     <text textAnchor="middle" y={r + 13} fontSize="10" fontFamily="Spectral, Georgia, serif"
                       fill={isHov ? '#f0ead8' : '#c3c8d0'} fillOpacity={isHov ? 1 : 0.88} style={{ pointerEvents: 'none', userSelect: 'none' }}>{name}</text>
                   </g>
@@ -762,12 +859,13 @@ function LineageNetwork({ onCivSelect }) {
 // ════════════════════════════════════════════════════════════════════════
 export default function ConstellationView({ filterTheme, onCivSelect }) {
   const [view, setView] = useState('cosmogenesis')
+  const isMobile = useIsMobile()
 
   const hint = view === 'network'
     ? 'Documented influence between traditions'
     : view === 'cosmogenesis'
       ? (filterTheme ? <>Theme filter: <strong>{filterTheme}</strong></> : 'Each cluster is a creation archetype')
-      : (filterTheme ? <>Theme filter: <strong>{filterTheme}</strong></> : 'Traditions grouped into era rings')
+      : (filterTheme ? <>Theme filter: <strong>{filterTheme}</strong></> : 'Rings = eras · spokes = world regions')
 
   return (
     <div className="constellation-container constellation-cosmic">
@@ -786,7 +884,7 @@ export default function ConstellationView({ filterTheme, onCivSelect }) {
 
       {view === 'network'
         ? <LineageNetwork onCivSelect={onCivSelect} />
-        : <StarGraph layout={view} filterTheme={filterTheme} onCivSelect={onCivSelect} />}
+        : <StarGraph layout={view} filterTheme={filterTheme} onCivSelect={onCivSelect} isMobile={isMobile} />}
     </div>
   )
 }

@@ -126,8 +126,8 @@ export default function App() {
       }
       if (selectedCiv || showAbout || selectedMigration || compareCivs || pendingCompare || compareSelect) return
       if (timelineMode) {
-        if (e.key === 'ArrowRight') setTimelineYear(y => Math.min(1800, y + 100))
-        if (e.key === 'ArrowLeft')  setTimelineYear(y => Math.max(-5000, y - 100))
+        if (e.key === 'ArrowRight') { setShowAll(false); setTimelineYear(y => Math.min(1800, y + 100)) }
+        if (e.key === 'ArrowLeft')  { setShowAll(false); setTimelineYear(y => Math.max(-5000, y - 100)) }
         return
       }
       const idx = ERAS.findIndex(era => era.id === selectedEra)
@@ -212,6 +212,13 @@ export default function App() {
     setShowAll(v => !v)
     setFilterTheme(null)
   }
+
+  // Scrubbing the timeline re-engages era filtering, so "All Eras" acts as a
+  // momentary override the slider releases rather than a sticky state.
+  const handleTimelineYear = useCallback((y) => {
+    setShowAll(false)
+    setTimelineYear(y)
+  }, [])
 
   return (
     <div className="app">
@@ -352,7 +359,7 @@ export default function App() {
       <footer className="app-footer">
         <TimeSlider
           timelineYear={timelineYear}
-          onTimelineYear={setTimelineYear}
+          onTimelineYear={handleTimelineYear}
           onEraInfoClick={setEraInfoId}
         />
         <div className="app-byline">Sunny Guha</div>

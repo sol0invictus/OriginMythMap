@@ -367,23 +367,24 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
 .slider-input::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--thumb-color, var(--accent));
   cursor: pointer;
-  border: 2px solid var(--bg);
-  box-shadow: 0 0 8px var(--thumb-color, var(--accent));
-  transition: background 0.3s, box-shadow 0.3s;
+  border: 3px solid var(--bg);
+  box-shadow: 0 0 10px var(--thumb-color, var(--accent));
+  transition: background 0.3s, box-shadow 0.3s, transform 0.15s;
 }
+.slider-input::-webkit-slider-thumb:hover { transform: scale(1.12); }
 .slider-input::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: var(--thumb-color, var(--accent));
   cursor: pointer;
-  border: 2px solid var(--bg);
-  box-shadow: 0 0 8px var(--thumb-color, var(--accent));
+  border: 3px solid var(--bg);
+  box-shadow: 0 0 10px var(--thumb-color, var(--accent));
 }
 
 .slider-ticks {
@@ -1687,6 +1688,22 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   .constellation-cosmic g[opacity] circle[fill="url(#star-glow)"] { animation: none !important; }
 }
 
+/* Touch devices: drop the GPU-heavy compositing that re-rasterizes on every
+   pinch-zoom frame — the mix-blend-mode nebula, backdrop blur on the floating
+   panels, and the ambient twinkle/glow animations. This is the main cause of
+   the stutter in the Cosmogenesis / Era Rings / Network views on phones. */
+@media (pointer: coarse) {
+  .constellation-nebula { display: none; }
+  .constellation-controls,
+  .constellation-legend,
+  .constellation-tooltip,
+  .lineage-header,
+  .lineage-tooltip,
+  .lineage-edge-panel { backdrop-filter: none; }
+  .constellation-bg-stars circle,
+  .constellation-cosmic g[opacity] circle[fill="url(#star-glow)"] { animation: none !important; }
+}
+
 /* ─── Mobile responsive ────────────────────────────────────── */
 @media (max-width: 768px) {
   .app-header {
@@ -1720,8 +1737,8 @@ html, body, #root { height: 100%; overflow: hidden; background: var(--bg); color
   .slider-ticks { display: none; }
   .slider-track-wrap { padding-bottom: 8px; }
   .slider-input { height: 5px; }
-  .slider-input::-webkit-slider-thumb { width: 24px; height: 24px; }
-  .slider-input::-moz-range-thumb { width: 24px; height: 24px; }
+  .slider-input::-webkit-slider-thumb { width: 28px; height: 28px; }
+  .slider-input::-moz-range-thumb { width: 28px; height: 28px; }
 
   .myth-popup-overlay { padding: 0; align-items: flex-end; }
   .myth-popup {
